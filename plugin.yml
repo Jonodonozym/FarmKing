@@ -1,0 +1,28 @@
+main: farmKing.main.Main
+name: FarmKing
+version: 1.0
+author: Jonodonozym
+depend: [HolographicDisplays, UPEconomy, WorldEdit]
+description: A farmking pluign
+
+commands:
+  farm:
+    description: Commands to manage your farm
+    aliases: [f,farmking]
+    usage: |
+      Use /help f [subcommand] for more information
+      /farm go - Teleport to your farm
+    farm go:
+      description: Creates a new farm if you don't have one and teleports you to it
+    farm purge:
+      description: Purges player data from old farms
+      usage: /farm purge [age in days]
+      permission: FarmKing.admin.purge
+      permission-message: You need to be an admin to do that!
+      
+permissions:
+  FarmKing.admin.*:
+    description: Gives access to all administrative commands
+    default: op
+  FarmKing.admin.purge:
+    description: permission to purge old farms
