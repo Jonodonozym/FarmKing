@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/Essentials-2.x-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/HolographicDisplays.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jaiden/git/FarmKing/Libs/jnbt-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/worldedit-bukkit-6.1.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/UPEconomy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/WorldEdit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
