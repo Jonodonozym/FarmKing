@@ -20,6 +20,7 @@ import jdz.farmKing.stats.types.FarmStatLinked;
 import jdz.farmKing.stats.types.FarmStatTime;
 import jdz.statsTracker.event.StatChangeEvent;
 import jdz.statsTracker.stats.StatType;
+import jdz.statsTracker.stats.StatsManager;
 import jdz.statsTracker.stats.abstractTypes.BufferedStatType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,9 +28,9 @@ import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class FarmStats extends BufferedStatType {
-	@Getter public static StatType[] values = getAll();
+	@Getter public static List<FarmStat> values = getAll();
 
-	private static StatType[] getAll() {
+	private static List<FarmStat> getAll() {
 		List<FarmStat> stats = new ArrayList<FarmStat>();
 		stats.addAll(Arrays.asList(LEVEL, GEMS, ONLINE_TIME, OFFLINE_TIME, PLAY_TIME, EARNINGS, ALL_SEEDS_TOTAL,
 				WORKERS, CLICKS, CLICKS_AUTO, CLICKS_MANUAL, OFFLINE_BONUS));
@@ -37,14 +38,18 @@ public abstract class FarmStats extends BufferedStatType {
 		stats.addAll(CurrentSeedTypes.values());
 		stats.addAll(totalSeeds.values());
 
-		List<StatType> maxTypes = new ArrayList<StatType>();
+		List<FarmStat> maxTypes = new ArrayList<FarmStat>();
 		for (FarmStat stat : stats)
 			if (stat.hasMax())
 				maxTypes.add(stat.getMaxType());
 
-		maxTypes.addAll(stats);
+		stats.addAll(maxTypes);
 
-		return maxTypes.toArray(new StatType[0]);
+		return stats;
+	}
+
+	public static void registerAll(FarmKing plugin) {
+		StatsManager.getInstance().addTypes(plugin, getValues().toArray(new StatType[0]));
 	}
 
 	public static final FarmStatBuffered LEVEL = new FarmStatDouble("Farm Level");

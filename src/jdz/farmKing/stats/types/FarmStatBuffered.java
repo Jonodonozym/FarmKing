@@ -3,13 +3,12 @@ package jdz.farmKing.stats.types;
 
 import jdz.farmKing.farm.Farm;
 import jdz.statsTracker.stats.abstractTypes.BufferedStatType;
-import jdz.statsTracker.stats.abstractTypes.MaxStatType;
 import lombok.Getter;
 
 public abstract class FarmStatBuffered extends BufferedStatType implements FarmStat {
 	@Getter private final String name;
 	@Getter private final boolean visible;
-	@Getter private final MaxStatType maxType;
+	@Getter private final FarmStatMax maxType;
 
 	public FarmStatBuffered(String name) {
 		this(name, true, true);
@@ -19,17 +18,7 @@ public abstract class FarmStatBuffered extends BufferedStatType implements FarmS
 		this.name = name;
 		this.visible = visible;
 		if (max)
-			maxType = new MaxStatType(this) {
-				@Override
-				public String getName() {
-					return "Max " + this.getName();
-				}
-
-				@Override
-				public boolean isVisible() {
-					return false;
-				}
-			};
+			maxType = new FarmStatMax(this);
 		else
 			maxType = null;
 	}

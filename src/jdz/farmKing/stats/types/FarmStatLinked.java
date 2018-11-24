@@ -3,7 +3,6 @@ package jdz.farmKing.stats.types;
 
 import jdz.UEconomy.UEcoFormatter;
 import jdz.farmKing.farm.Farm;
-import jdz.statsTracker.stats.abstractTypes.MaxStatType;
 import jdz.statsTracker.stats.abstractTypes.NoSaveStatType;
 import lombok.Getter;
 
@@ -11,7 +10,7 @@ public class FarmStatLinked extends NoSaveStatType implements FarmStat {
 	private final ValueGetter getter;
 	@Getter private final String name;
 	@Getter private final boolean visible;
-	@Getter private final MaxStatType maxType;
+	@Getter private final FarmStatMax maxType;
 
 	public FarmStatLinked(String name, ValueGetter getter) {
 		this(name, true, true, getter);
@@ -26,16 +25,7 @@ public class FarmStatLinked extends NoSaveStatType implements FarmStat {
 		this.visible = visible;
 		this.getter = getter;
 		if (hasMax)
-			maxType = new MaxStatType(this) {
-				@Override
-				public String getName() {
-					return "Max " + this.getName();
-				}
-				@Override
-				public boolean isVisible() {
-					return false;
-				}
-			};
+			maxType = new FarmStatMax(this);
 		else
 			maxType = null;
 	}
