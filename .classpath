@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/Downloads/spigot-1.11.2.jar">
+	<classpathentry kind="src" output="target/classes" path="src">
 		<attributes>
-			<attribute name="javadoc_location" value="https://hub.spigotmc.org/javadocs/spigot/"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/Vault.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/Essentials-2.x-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/HolographicDisplays.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/git/FarmKing/Libs/jnbt-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/UPEconomy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jaiden/AppData/Roaming/TT-servers/DVCQVRHFDV/plugins/WorldEdit.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/gcStats.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/HolographicDisplays.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/JBU.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/UEco.jar"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
