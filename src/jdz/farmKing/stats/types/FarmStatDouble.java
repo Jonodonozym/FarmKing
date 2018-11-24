@@ -5,11 +5,15 @@ import jdz.UEconomy.UEcoFormatter;
 
 public class FarmStatDouble extends FarmStatBuffered {
 	public FarmStatDouble(String name) {
-		super(name, true);
+		super(name, true, true);
 	}
 	
 	public FarmStatDouble(String name, boolean isVisible) {
-		super(name, isVisible);
+		super(name, isVisible, true);
+	}
+	
+	public FarmStatDouble(String name, boolean isVisible, boolean hasMax) {
+		super(name, isVisible, hasMax);
 	}
 
 	@Override

@@ -3,11 +3,15 @@ package jdz.farmKing.stats.types;
 
 public class FarmStatPercent extends FarmStatBuffered {
 	public FarmStatPercent(String name) {
-		super(name, true);
+		super(name, true, true);
 	}
-
+	
 	public FarmStatPercent(String name, boolean isVisible) {
-		super(name, isVisible);
+		super(name, isVisible, true);
+	}
+	
+	public FarmStatPercent(String name, boolean isVisible, boolean hasMax) {
+		super(name, isVisible, hasMax);
 	}
 
 	@Override
