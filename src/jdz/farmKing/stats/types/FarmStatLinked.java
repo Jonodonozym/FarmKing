@@ -10,6 +10,10 @@ public class FarmStatLinked extends NoSaveStatType {
 	private final ValueGetter getter;
 	@Getter private final String name;
 	@Getter private final boolean visible;
+
+	public FarmStatLinked(String name, ValueGetter getter) {
+		this(name, true, getter);
+	}
 	
 	public FarmStatLinked(String name, boolean visible, ValueGetter getter) {
 		this.name = name;

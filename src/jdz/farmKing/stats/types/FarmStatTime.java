@@ -1,9 +1,7 @@
 
 package jdz.farmKing.stats.types;
 
-import jdz.farmKing.stats.FarmStat;
-
-public class FarmStatTime extends FarmStat {
+public class FarmStatTime extends FarmStatBuffered {
 	public FarmStatTime(String name) {
 		super(name, true);
 	}

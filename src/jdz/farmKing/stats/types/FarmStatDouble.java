@@ -2,9 +2,8 @@
 package jdz.farmKing.stats.types;
 
 import jdz.UEconomy.UEcoFormatter;
-import jdz.farmKing.stats.FarmStat;
 
-public class FarmStatDouble extends FarmStat {
+public class FarmStatDouble extends FarmStatBuffered {
 	public FarmStatDouble(String name) {
 		super(name, true);
 	}

@@ -1,9 +1,7 @@
 
 package jdz.farmKing.stats.types;
 
-import jdz.farmKing.stats.FarmStat;
-
-public class FarmStatPercent extends FarmStat {
+public class FarmStatPercent extends FarmStatBuffered {
 	public FarmStatPercent(String name) {
 		super(name, true);
 	}
