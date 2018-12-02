@@ -3,18 +3,19 @@ package jdz.farmKing.command;
 
 import org.bukkit.entity.Player;
 
+import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.farmKing.element.ElementSelectInventory;
-import jdz.farmKing.farm.EventFlag;
 import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.PlayerFarms;
+import jdz.farmKing.stats.EventFlag;
 import net.md_5.bungee.api.ChatColor;
 
 @CommandLabel("alignment")
 @CommandLabel("alignments")
 @CommandLabel("a")
-public class FarmAlignmentsCommand {
+public class FarmAlignmentsCommand extends SubCommand {
 
 	@CommandMethod
 	public void openAlignmentsGUI(Player player) {
@@ -25,7 +26,7 @@ public class FarmAlignmentsCommand {
 			return;
 		}
 
-		if (!farm.eventIsComplete.get(EventFlag.ALIGNMENTS_UNLOCKED)) {
+		if (!EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm)) {
 			player.sendMessage(ChatColor.RED + "You need 2B gems to do that!");
 			return;
 		}

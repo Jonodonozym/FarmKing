@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import jdz.UEconomy.UEcoFormatter;
+import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.farmKing.FarmKing;
@@ -18,7 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 @CommandLabel("reset")
 @CommandLabel("gemReset")
 @CommandLabel("gm")
-public class FarmGemReset {
+public class FarmGemReset extends SubCommand {
 	private Set<Player> hasPerformedCheck = new HashSet<Player>();
 
 	@CommandMethod

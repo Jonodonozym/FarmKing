@@ -12,7 +12,8 @@ import lombok.Getter;
 
 @CommandExecutorPlayerOnly
 public class FarmCommandExecutor extends CommandExecutor {
-	@Getter private final List<SubCommand> subCommands = Arrays.asList();
+	@Getter private final List<SubCommand> subCommands = Arrays.asList(new FarmGoCommand(), new FarmAlignmentsCommand(),
+			new FarmGemReset());
 
 	public FarmCommandExecutor(FarmKing plugin) {
 		super(plugin, "f");
