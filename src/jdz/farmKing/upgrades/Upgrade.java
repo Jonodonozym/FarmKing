@@ -1,3 +1,4 @@
+
 package jdz.farmKing.upgrades;
 
 import java.util.ArrayList;
@@ -6,17 +7,23 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.StatType;
+import lombok.Getter;
 
-public abstract class Upgrade {
+public class Upgrade{
 	public static ChatColor loreColor = ChatColor.BLUE;
 
-	private final String name;
-	private final String description;
-	private final List<String> lore;
+	@Getter private final String name;
+	@Getter private final String description;
+	@Getter private final List<String> lore;
 	private final List<UpgradeType> types;
+	private final List<UpgradeExpression> expressions;
 
-	private Upgrade(String name, String description, List<UpgradeType> types) {
+	public Upgrade(String name, String description, List<UpgradeType> types, List<UpgradeExpression> expressions) {
+		if (name == null)
+			name = "";
+		if (description == null)
+			description = "";
+		
 		this.name = name;
 		this.description = description;
 
@@ -33,18 +40,11 @@ public abstract class Upgrade {
 		this.lore.add(loreColor + currentString);
 
 		this.types = types;
+		this.expressions = expressions;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public List<String> getLore() {
-		return lore;
-	}
-
-	public String getDescription() {
-		return description;
+	
+	public static Upgrade emptyUpgrade(){
+		return new Upgrade("","",new ArrayList<UpgradeType>(), new ArrayList<UpgradeExpression>());
 	}
 
 	public int getNumBonuses() {
@@ -53,234 +53,13 @@ public abstract class Upgrade {
 
 	public UpgradeType getType(int i) {
 		return types.get(i);
-	};
-
-	public abstract double getBonus(int i, Farm f);
-
-	public abstract boolean isDisplayable(int i);
-
-	public static Upgrade fromConstant(String name, String description, UpgradeType type, double constant) {
-		List<UpgradeType> list = new ArrayList<UpgradeType>();
-		list.add(type);
-		return new Upgrade(name, description, list) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return constant;
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return false;
-			}
-
-		};
+	}
+	
+	public double getBonus(int i, Farm f) {
+		return expressions.get(i).evaluate(f);
 	}
 
-	public static Upgrade fromStat(String name, String description, UpgradeType type, StatType statType) {
-		List<UpgradeType> list = new ArrayList<UpgradeType>();
-		list.add(type);
-		return new Upgrade(name, description, list) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return f.getStat(statType);
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return true;
-			}
-
-		};
-	}
-
-	public static Upgrade fromStatMax(String name, String description, UpgradeType type, StatType statType) {
-		List<UpgradeType> list = new ArrayList<UpgradeType>();
-		list.add(type);
-		return new Upgrade(name, description, list) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return f.getStatMax(statType);
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return true;
-			}
-
-		};
-	}
-
-	public static Upgrade fromStatCumulative(String name, String description, UpgradeType type, StatType statType) {
-		List<UpgradeType> list = new ArrayList<UpgradeType>();
-		list.add(type);
-		return new Upgrade(name, description, list) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return f.getStatCumulative(statType);
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return true;
-			}
-
-		};
-	}
-
-	public Upgrade multiply(double constant) {
-		return multiply(0, constant);
-	}
-
-	public Upgrade add(double constant) {
-		return add(0, constant);
-	}
-
-	public Upgrade power(double constant) {
-		return power(0, constant);
-	}
-
-	public Upgrade log() {
-		return log(0);
-	}
-
-	public Upgrade multiply(int index, double constant) {
-		Upgrade self = this;
-		if (this.getNumBonuses() > 1)
-			return new Upgrade(name, description, types) {
-				@Override
-				public double getBonus(int i, Farm f) {
-					if (i == index)
-						return self.getBonus(i, f) * constant;
-					return self.getBonus(i, f);
-				}
-
-				@Override
-				public boolean isDisplayable(int i) {
-					return self.isDisplayable(i);
-				}
-			};
-		return new Upgrade(name, description, types) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return self.getBonus(i, f) * constant;
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return self.isDisplayable(i);
-			}
-		};
-	}
-
-	public Upgrade add(int index, double constant) {
-		Upgrade self = this;
-		if (this.getNumBonuses() > 1)
-			return new Upgrade(name, description, types) {
-				@Override
-				public double getBonus(int i, Farm f) {
-					if (i == index)
-						return self.getBonus(i, f) + constant;
-					return self.getBonus(i, f);
-				}
-
-				@Override
-				public boolean isDisplayable(int i) {
-					return self.isDisplayable(i);
-				}
-			};
-		return new Upgrade(name, description, types) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return self.getBonus(i, f) + constant;
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return self.isDisplayable(i);
-			}
-		};
-	}
-
-	public Upgrade power(int index, double constant) {
-		Upgrade self = this;
-		if (this.getNumBonuses() > 1)
-			return new Upgrade(name, description, types) {
-				@Override
-				public double getBonus(int i, Farm f) {
-					if (i == index)
-						return Math.pow(self.getBonus(i, f), constant);
-					return self.getBonus(i, f);
-				}
-
-				@Override
-				public boolean isDisplayable(int i) {
-					return self.isDisplayable(i);
-				}
-			};
-		return new Upgrade(name, description, types) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return Math.pow(self.getBonus(i, f), constant);
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return self.isDisplayable(i);
-			}
-		};
-
-	}
-
-	public Upgrade log(int index) {
-		Upgrade self = this;
-		if (this.getNumBonuses() > 1)
-			return new Upgrade(name, description, types) {
-				@Override
-				public double getBonus(int i, Farm f) {
-					if (i == index)
-						return Math.log(self.getBonus(i, f));
-					return self.getBonus(i, f);
-				}
-
-				@Override
-				public boolean isDisplayable(int i) {
-					return self.isDisplayable(i);
-				}
-			};
-		return new Upgrade(name, description, types) {
-			@Override
-			public double getBonus(int i, Farm f) {
-				return Math.log(self.getBonus(i, f));
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				return self.isDisplayable(i);
-			}
-		};
-
-	}
-
-	public Upgrade addUpgrade(Upgrade other) {
-		List<UpgradeType> list = new ArrayList<UpgradeType>(types);
-		list.addAll(other.types);
-		Upgrade self = this;
-		return new Upgrade(name, description, list) {
-
-			@Override
-			public double getBonus(int i, Farm f) {
-				if (i < self.getNumBonuses())
-					return self.getBonus(i, f);
-				return other.getBonus(i - self.getNumBonuses(), f);
-			}
-
-			@Override
-			public boolean isDisplayable(int i) {
-				if (i < self.getNumBonuses())
-					return self.isDisplayable(i);
-				return other.isDisplayable(i - self.getNumBonuses());
-			}
-
-		};
+	public boolean isDisplayable(int i) {
+		return expressions.get(i).isDisplayable();
 	}
 }
