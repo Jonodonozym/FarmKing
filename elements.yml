@@ -1,0 +1,355 @@
+MetaData:
+  tierSeedCosts:
+    - 20
+    - 100
+    - 500
+  upgradeCosts:
+    - 1e24
+    - 5e24
+    - 1e25
+    - 5e25
+    - 1e26
+    - 5e26
+    - 1e27
+    - 5e27
+    - 1e28
+  powerShardCost: 5000
+
+
+## ElementName:
+##   description: [description]
+##   icon: [Icon]
+##   iconData: [iconData]
+##   
+##   Upgrade_1:
+##     name:
+##     description:
+##     cost:
+##     upgrades:
+##       - UpgradeType: expression
+##       ... can have unlimited expressions
+
+##   Where expression is a mathematical expression which can use StatTypes as variables
+##   Must have upgrades 1 to 9, and a PowerShard upgrade
+
+
+
+Earth:  
+  description: The earth is eternal. It will outlast everything that lives for all eternity. Harness the limitless power of the planet to boost your farm's production. The earth's concept of time is vastly different from yours, so beware that it may be slow at first.
+  icon: STONE
+  iconData: 0
+  color: GOLD
+  crops:
+    - Red Mushroom
+    - Brown Mushroom
+
+  Upgrade_1:
+    name: Sleeping Mountains
+    description: Boosts offline production based on your online time this reset
+    upgrades: 
+      - ONLINE_PRODUCTION_PERCENT > log([Offline time]+1) / log(2)
+
+  Upgrade_2:
+    name: Dark Roots
+    description: Multiplies the production of mushrooms by 1000.
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1000
+
+  Upgrade_3:
+    name: Golemcraft
+    description: Gain 3 golem workers instantly, and gain more golems over time
+    upgrades: 
+      - WORKER_COUNT_DIRECT > 3 + ([Online time]/30) ^ 0.8
+
+  Upgrade_4:
+    name: Creeping Mycellium
+    description: Boosts the production of mushrooms based on your offline time this reset
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > [offline time] ^ 0.8 / 60
+
+  Upgrade_5:
+    name: Deep Memory
+    description: Boosts production based on your total offline time
+    upgrades: 
+      - ALL_CROPS_PERCENT > log([total offline time]+1) / log(2)
+
+  Upgrade_6:
+    name: Timeless Luck
+    description: Increases your chance of finding seeds based on your total playtime this game
+    upgrades: 
+      - SEED_DIRECT > ([total play time]/300)^0.75
+
+  Upgrade_7:
+    name: Earth's Bounty
+    description: Automatically gain 3 seeds per second, and earn more based on your online time this reset
+    upgrades: 
+      - SEED_OVER_TIME > ([online time]/60)^1.1 + 3
+
+  Upgrade_8:
+    name: Sporeling Army
+    description: Boosts offline production based on your number of mushrooms
+    upgrades: 
+      - OFFLINE_PRODUCTION_PERCENT > [CROP_QUANTITY_ALIGNMENT]/1000
+
+  Upgrade_9 :
+    name: Seed Force
+    description: Boosts offline production based on the amount of earth seeds found this game
+    upgrades: 
+      - OFFLINE_PRODUCTION_PERCENT > ([ELEMENT_SEEDS_EARNT] / 1000)^0.9
+
+  PowerShard:
+    name: Earth Shard
+    description: Gain workers based on your longest game
+    upgrades: 
+      - WORKER_COUNT_DIRECT > ([PLAY_TIME_MAX]/60) ^ 0.5
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+Air:  
+  description: Air is the essence of life; all living things need it. By harnessing it, the weather will be at your beck and call. Rain or shine, hot or cold, that is for you to decide. upgrades focus on production from saplings and workers
+  icon: GLASS
+  iconData: 0
+  color: LIGHT_GREEN
+  crops:
+    - Sapling
+
+  Upgrade_1:
+    name: Breath of life
+    description: Your crops feed your workforce, giving you workers based on the amount of plants you have
+    upgrades: 
+      - WORKER_COUNT_DIRECT > [CROP_QUANTITY_TOTAL] / 1200
+
+  Upgrade_2:
+    name: Energized workforce
+    description: Workers produce twice as many seeds
+    upgrades: 
+      - WORKER_SEED_PERCENT > 2
+
+  Upgrade_3:
+    name: Encouragement
+    description: Worker production is increased based on the amount of plants you have
+    upgrades: 
+      - WORKER_PRODUCTION_PERCENT > [CROP_QUANTITY_TOTAL] / 1200
+
+  Upgrade_4:
+    name: Wind Sprites
+    description: Wind Sprites join your workforce, tripling the amount of workers you have
+    upgrades: 
+      - WORKER_COUNT_PERCENT > 2
+
+  Upgrade_5:
+    name: Delicate Touch
+    description: Boosts sapling production based on the amount of workers you have
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > ([WORKERS]/10)^0.8
+
+  Upgrade_6:
+    name: Call of the Wind
+    description: Gain workers based on the amount of air seeds you've found this reset
+    upgrades: 
+      - WORKER_COUNT_DIRECT > ([ELEMENT_SEEDS_EARNT]/100) ^ 0.5
+
+  Upgrade_7:
+    name: Experienced Workers
+    description: Worker production is boosted based on online time this game
+    upgrades: 
+      - WORKER_PRODUCTION_PERCENT > ([ONLINE_TIME]/5)^0.9
+
+  Upgrade_8:
+    name: Synergy
+    description: Workers gain more seeds based on how many workers you have
+    upgrades: 
+      - WORKER_SEED_PERCENT > ([WORKERS]^0.8)/100
+
+  Upgrade_9 :
+    name: Tree of life
+    description: Increase the production of Saplings based on how many workers you have
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 2*([WORKERS]^0.75)
+
+  PowerShard:
+    name: Air Shard
+    description: Boost production based on the maximum number of workers you've had
+    upgrades: 
+      - ALL_CROPS_PERCENT > ([WORKERS_MAX]/10)^0.5
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fire:  
+  description: An unquenchable fire blazes within your soul. In your burning rage, you vow to destroy, to earn money at the destruction of plants instead of their growth. Boost the amount of income you earn from breaking grass.
+  icon: BLAZE_POWDER
+  iconData: 0
+  color: RED
+  crops:
+    - Netherwart
+
+  Upgrade_1:
+    name: Fists of Fury
+    description: Boosts the money you earn from clicking by 1Sx
+    upgrades: 
+      - CLICK_DIRECT > 1e21
+      
+  Upgrade_2:
+    name: Taunting
+    description: Multiplies your earnings per click based on the amount of plants you have
+    upgrades: 
+      - CLICK_PERCENT > [CROP_QUANTITY_TOTAL]
+      
+  Upgrade_3:
+    name: Blazing Greed
+    description: Increases your chance of finding elemental seeds by 10%
+    upgrades:
+      - SEED_DIRECT > 0.1
+      
+  Upgrade_4:
+    name: Rage
+    description: Multiplies your click reward based on the number of clicks you have made this reset
+    upgrades:
+      - CLICK_PERCENT > [CLICKS_MANUAL] / 1000
+      
+  Upgrade_5:
+    name: Greed Drive
+    description: Multiples your income based on the amount of fire seeds found this reset
+    upgrades:
+      - ALL_CROPS_PERCENT > [ELEMENT_SEEDS_EARNT] ^ 0.5
+      
+  Upgrade_6:
+    name: Fire Sprites
+    description: Fire sprites join your workforce, increasing your workers based on your total clicks
+    upgrades:
+      - WORKER_COUNT_DIRECT > [CLICKS_MANUAL] ^ 0.9 / 500
+      
+  Upgrade_7:
+    name: Parasitic Warts
+    description: Boosts your netherwart production based on the amount of clicks you've made this reset
+    upgrades:
+      - ALIGNMENT_CROP_PERCENT > [CLICKS_MANUAL] / 666
+      
+  Upgrade_8:
+    name: Parasitic Punch
+    description: Inceases your click reward by your number of netherwarts
+    upgrades:
+      - CLICK_DIRECT > ([CROP_QUANTITY_ALIGNMENT] * 1e25) ^ 1.1
+      
+  Upgrade_9:
+    name: Summon Demon
+    description: Call forth a demon from hell to click 10 times per second for you
+    upgrades:
+      - AUTO_CLICKS > 10
+      
+  PowerShard:
+    name: Fire Shard
+    description: Increase your seed find chance by 5% and boost your production based on seeds found this game
+    upgrades:
+      - SEED_DIRECT > 0.05
+      - ALL_CROPS_PERCENT > [SEEDS_EARNT] / 1000
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+Water:  
+  description: {no description}
+  icon: WATER_BUCKET
+  iconData: 0
+  color: AQUA
+  crops:
+    - Wheat
+    - Carrot
+    - Potato
+    - Beetroot
+
+  Upgrade_1:
+    name: Irrigation
+    description: Multiply the production of farmland crops by the number of farmland crops you have
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > [CROP_QUANTITY_ALIGNMENT]^2
+
+  Upgrade_2:
+    name: Hydroponics
+    description: Reduce the cost multiplier for farmland crops
+    upgrades: 
+      - MAIN_CROP_COST_MULTIPLIER > 1
+
+  Upgrade_3:
+    name: Recycling
+    description: Increase production of farmland crops based on the total number of crops you have
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > ([CROP_QUANTITY_TOTAL]/500)^0.7
+
+  Upgrade_4:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  Upgrade_5:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  Upgrade_6:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  Upgrade_7:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  Upgrade_8:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  Upgrade_9 :
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
+
+  PowerShard:
+    name: ""
+    description: ""
+    upgrades: 
+      - ALIGNMENT_CROP_PERCENT > 1
