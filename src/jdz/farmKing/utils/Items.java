@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import jdz.farmKing.farm.Farm;
+import jdz.farmKing.farm.data.PlayerFarms;
+import jdz.farmKing.stats.EventFlag;
 import net.md_5.bungee.api.ChatColor;
 
 public class Items {
@@ -60,13 +65,31 @@ public class Items {
 		im2.setDisplayName(ChatColor.GREEN+"Go to farm");
 		im3.setDisplayName(ChatColor.YELLOW+"Gem reset");
 		im4.setDisplayName(ChatColor.DARK_AQUA+"Alignment");
-		im5.setDisplayName(ChatColor.DARK_AQUA+"Achievements");
+		im5.setDisplayName(ChatColor.GOLD+"Achievements");
 		buyTypeItem.setItemMeta(im1);
 		returnHomeItem.setItemMeta(im2);
 		gemResetItem.setItemMeta(im3);
 		alignmentItem.setItemMeta(im4);
-		alignmentItem.setItemMeta(im5);
+		achievementsItem.setItemMeta(im5);
 		buyTypeItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
 	}
+	
+	public static void give(Player player) {
+		Inventory inv = player.getInventory();
+		
+		inv.clear();
+		inv.setItem(0, returnHomeItem);
+		inv.setItem(1, buyTypeItem);
+		inv.setItem(2, achievementsItem);
+		inv.setItem(8, tutorialBook);
+		inv.setItem(7, gemResetItem);
+		
+		if (!PlayerFarms.hasFarm(player))
+			return;
 
+		Farm f = PlayerFarms.get(player);
+		if (EventFlag.ALIGNMENTS_UNLOCKED.isComplete(f))
+			inv.addItem(Items.alignmentItem);
+		
+	}
 }
