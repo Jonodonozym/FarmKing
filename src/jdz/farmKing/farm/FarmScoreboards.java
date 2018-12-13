@@ -1,77 +1,144 @@
 
 package jdz.farmKing.farm;
 
+import static jdz.UEconomy.UEcoFormatter.charFormat;
+import static jdz.UEconomy.UEcoFormatter.makeWhole;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
-import com.jonodonozym.UPEconomy.UPEconomyAPI;
-
-import net.md_5.bungee.api.ChatColor;
+import jdz.UEconomy.data.UEcoBank;
+import jdz.farmKing.element.Element;
+import jdz.farmKing.farm.data.PlayerFarms;
+import jdz.farmKing.stats.EventFlag;
+import jdz.farmKing.stats.FarmStats;
+import static net.md_5.bungee.api.ChatColor.*;
 
 public class FarmScoreboards {
-	public static Map<Player,String> sbBal = new HashMap<Player,String>();
-	public static Map<Player,String> sbInc = new HashMap<Player,String>();
-	public static Map<Player,String> sbGem = new HashMap<Player,String>();
-	
-	public static void updateScoreboard(Player player){
-		Scoreboard scoreboard = player.getScoreboard();
-		
-		Objective sb = scoreboard.getObjective("scoreboard");
+	public static Map<Player, PlayerScoreboardData> scoreboards = new HashMap<>();
 
-		scoreboard.resetScores(sbBal.get(player));
-		scoreboard.resetScores(sbInc.get(player));
-		
-		String balance = ChatColor.GREEN + "$"+UPEconomyAPI.charFormat(UPEconomyAPI.getBalance(player), 4);
-		String income = ChatColor.GREEN + "$"+UPEconomyAPI.charFormat(FarmData.playerToFarm.get(player).currentIncome, 4)+"/s";
-		
-		sb.getScore(balance).setScore(6);
-		sb.getScore(income).setScore(3);
-		
-		sbBal.put(player, balance);
-		sbInc.put(player, income);
+	public static Map<Player, String> sbGem = new HashMap<Player, String>();
+	public static Map<Player, String> sbWorkers = new HashMap<Player, String>();
+
+
+	public static void updateScoreboard(Player player) {
+		PlayerScoreboardData data = scoreboards.get(player);
+
+		updateBalance(data);
+		updateIncome(data);
+		updateGems(player);
+		updateSeeds(data);
+		updateWorkers(data);
 	}
-	
-	public static void addPlayer(Player player){
-		Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
-		Objective title = sb.registerNewObjective("scoreboard", "dummy");
-		
-		title.setDisplayName(ChatColor.BOLD+""+ChatColor.YELLOW+"Farm Details");
-		title.setDisplaySlot(DisplaySlot.SIDEBAR);
-		title.getScore(" ").setScore(8);
-		title.getScore(ChatColor.WHITE + "Balance").setScore(7);
-		title.getScore(ChatColor.GREEN + "$0").setScore(6);
-		title.getScore("  ").setScore(5);
-		title.getScore(ChatColor.WHITE + "Income").setScore(4);
-		title.getScore(ChatColor.GREEN + "$0/s").setScore(3);
-		title.getScore("   ").setScore(2);
-		title.getScore(ChatColor.WHITE + "Gems").setScore(1);
-		title.getScore(ChatColor.GREEN + "0").setScore(0);
-		
-		player.setScoreboard(sb);
-		
-		sbBal.put(player, ChatColor.GREEN + "$0");
-		sbInc.put(player, ChatColor.GREEN + "$0/s");
-		sbGem.put(player, ChatColor.GREEN + "0");
-		
-		if (FarmData.playerToFarm.containsKey(player)){
-			Farm f = FarmData.playerToFarm.get(player);
-			sb.resetScores(sbGem.get(player));
-			String gemsS = UPEconomyAPI.charFormat(f.getStat(StatType.FARM_GEMS), 4);
-			title.getScore(ChatColor.GREEN + ""+gemsS).setScore(0);
-			sbGem.put(player, ChatColor.GREEN + ""+gemsS);
-			updateScoreboard(player);
+
+	private static void updateBalance(PlayerScoreboardData data) {
+		data.getScoreboard().resetScores(data.getBalance());
+		data.setBalance(GREEN + "$" + charFormat(UEcoBank.get(data.getOwner()), 4));
+		data.getObjective().getScore(data.getBalance()).setScore(6);
+	}
+
+	private static void updateIncome(PlayerScoreboardData data) {
+		Farm farm = PlayerFarms.get(data.getOwner());
+		data.getScoreboard().resetScores(data.getIncome());
+		data.setIncome(GREEN + "$" + charFormat(farm == null ? 0 : farm.currentIncome, 4) + "/s");
+		data.getObjective().getScore(data.getIncome()).setScore(3);
+	}
+
+	public static void updateGems(Player player) {
+		PlayerScoreboardData data = scoreboards.get(player);
+		Farm farm = PlayerFarms.get(player);
+
+		data.getScoreboard().resetScores(FarmScoreboards.sbGem.get(player));
+		data.setGems(GREEN + "" + makeWhole(charFormat(FarmStats.GEMS.get(farm), 4)));
+		data.getObjective().getScore(data.getGems()).setScore(0);
+	}
+
+	private static void updateSeeds(PlayerScoreboardData data) {
+		Farm farm = PlayerFarms.get(data.getOwner());
+
+		if (farm == null || !EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm))
+			return;
+
+		for (int i = 0; i < data.seedLines(); i++)
+			data.getScoreboard().resetScores(data.getSeedLine(i));
+
+		for (Element element : Element.values()) {
+			double seeds = FarmStats.SEEDS(element).get(farm);
+			data.setSeed(element, element.color + makeWhole(charFormat(seeds, 4)));
 		}
+
+		for (int i = 0; i < data.seedLines(); i++)
+			data.getObjective().getScore(data.getSeedLine(i)).setScore(-6 - i);
 	}
-	
-	public static void removePlayer(Player player){
-		sbBal.remove(player);
-		sbInc.remove(player);
-		sbGem.remove(player);
+
+	private static void updateWorkers(PlayerScoreboardData data) {
+		Farm farm = PlayerFarms.get(data.getOwner());
+
+		if (farm == null || !EventFlag.WORKERS_UNLOCKED.isComplete(farm))
+			return;
+
+		data.getScoreboard().resetScores(data.getWorkers());
+		data.setWorkers(GREEN + "" + makeWhole(charFormat(FarmStats.WORKERS.get(farm), 4)) + " ");
+		data.getObjective().getScore(data.getWorkers()).setScore(-3);
+	}
+
+	public static void createScoreboard(Player player) {
+		PlayerScoreboardData data = new PlayerScoreboardData(player);
+		scoreboards.put(player, data);
+
+		Objective obj = data.getObjective();
+
+		obj.setDisplayName(BOLD + "" + YELLOW + "Farm Details");
+		obj.getScore(" ").setScore(8);
+
+		obj.getScore(WHITE + "Balance").setScore(7);
+		obj.getScore(data.getBalance()).setScore(6);
+		obj.getScore("  ").setScore(5);
+
+		obj.getScore(WHITE + "Income").setScore(4);
+		obj.getScore(data.getIncome()).setScore(3);
+		obj.getScore("   ").setScore(2);
+
+		obj.getScore(WHITE + "Gems").setScore(1);
+		obj.getScore(data.getGems()).setScore(0);
+
+		Farm farm = PlayerFarms.get(player);
+		if (farm == null)
+			return;
+
+		if (EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm))
+			addSeedSection(player);
+		if (EventFlag.WORKERS_UNLOCKED.isComplete(farm))
+			addWorkerSection(player);
+
+		updateGems(player);
+		updateScoreboard(player);
+	}
+
+	public static void addSeedSection(Player player) {
+		PlayerScoreboardData data = scoreboards.get(player);
+		Objective sb = data.getObjective();
+
+		sb.getScore("     ").setScore(-4);
+		sb.getScore(WHITE + "Seeds").setScore(-5);
+
+		updateSeeds(data);
+	}
+
+	public static void addWorkerSection(Player player) {
+		PlayerScoreboardData data = scoreboards.get(player);
+		Objective sb = data.getObjective();
+
+		sb.getScore("    ").setScore(-1);
+		sb.getScore(WHITE + "Workers").setScore(-2);
+
+		updateWorkers(data);
+	}
+
+	public static void removeScoreboard(Player player) {
+		scoreboards.remove(player);
 	}
 }
