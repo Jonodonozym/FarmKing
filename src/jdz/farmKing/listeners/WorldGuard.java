@@ -14,9 +14,10 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
+import jdz.bukkitUtils.events.Listener;
 import jdz.bukkitUtils.events.custom.CropTrampleEvent;
 
-public class WorldGuard {
+public class WorldGuard implements Listener {
 	private static final World farmWorld = Bukkit.getWorlds().get(0);
 
 	@EventHandler

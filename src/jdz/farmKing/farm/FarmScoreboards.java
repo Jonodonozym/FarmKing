@@ -8,21 +8,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Objective;
 
 import jdz.UEconomy.data.UEcoBank;
+import jdz.bukkitUtils.events.Listener;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.farm.data.PlayerFarms;
 import jdz.farmKing.stats.EventFlag;
 import jdz.farmKing.stats.FarmStats;
 import static net.md_5.bungee.api.ChatColor.*;
 
-public class FarmScoreboards {
-	public static Map<Player, PlayerScoreboardData> scoreboards = new HashMap<>();
+public class FarmScoreboards implements Listener {
+	private static final Map<Player, PlayerScoreboardData> scoreboards = new HashMap<>();
 
-	public static Map<Player, String> sbGem = new HashMap<Player, String>();
-	public static Map<Player, String> sbWorkers = new HashMap<Player, String>();
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		createScoreboard(e.getPlayer());
+	}
 
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		scoreboards.remove(e.getPlayer());
+	}
 
 	public static void updateScoreboard(Player player) {
 		PlayerScoreboardData data = scoreboards.get(player);
@@ -51,7 +61,7 @@ public class FarmScoreboards {
 		PlayerScoreboardData data = scoreboards.get(player);
 		Farm farm = PlayerFarms.get(player);
 
-		data.getScoreboard().resetScores(FarmScoreboards.sbGem.get(player));
+		data.getScoreboard().resetScores(data.getGems());
 		data.setGems(GREEN + "" + makeWhole(charFormat(FarmStats.GEMS.get(farm), 4)));
 		data.getObjective().getScore(data.getGems()).setScore(0);
 	}
@@ -85,7 +95,7 @@ public class FarmScoreboards {
 		data.getObjective().getScore(data.getWorkers()).setScore(-3);
 	}
 
-	public static void createScoreboard(Player player) {
+	private static void createScoreboard(Player player) {
 		PlayerScoreboardData data = new PlayerScoreboardData(player);
 		scoreboards.put(player, data);
 
@@ -136,9 +146,5 @@ public class FarmScoreboards {
 		sb.getScore(WHITE + "Workers").setScore(-2);
 
 		updateWorkers(data);
-	}
-
-	public static void removeScoreboard(Player player) {
-		scoreboards.remove(player);
 	}
 }

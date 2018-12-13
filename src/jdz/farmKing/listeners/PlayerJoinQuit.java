@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -13,10 +12,12 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 
 import jdz.UEconomy.UEcoFormatter;
 import jdz.UEconomy.data.UEcoBank;
+import jdz.bukkitUtils.events.Listener;
 import jdz.farmKing.HologramManager;
 import jdz.farmKing.achievements.AchievementData;
 import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.FarmScoreboards;
+import jdz.farmKing.farm.FarmIncomeGenerator;
 import jdz.farmKing.farm.data.PlayerFarms;
 import jdz.farmKing.stats.EventFlag;
 import jdz.farmKing.stats.FarmStats;
@@ -58,43 +59,16 @@ public class PlayerJoinQuit implements Listener {
 	}
 
 	public static void playerJoinSetup(Player player) {
-		player.getInventory().clear();
-		player.getInventory().setItem(0, Items.returnHomeItem);
-		player.getInventory().setItem(1, Items.buyTypeItem);
-		player.getInventory().setItem(2, Items.achievementsItem);
-		player.getInventory().setItem(8, Items.tutorialBook);
-		player.getInventory().setItem(7, Items.gemResetItem);
-
-		AchievementData.addPlayer(player);
-
-		// offline time and income
 		Farm f = PlayerFarms.get(player);
 
-		if (EventFlag.ALIGNMENTS_UNLOCKED.isComplete(f))
-			player.getInventory().addItem(Items.alignmentItem);
-
-		double timeDifference = (System.currentTimeMillis() - f.lastLogin) / 1000.0;
-		if (timeDifference >= 60) {
-			FarmStats.OFFLINE_TIME.add(f, (int) (timeDifference / 60));
-
-			double avgIncome = (f.currentIncome + f.updateIncome()) / 2;
-
-			double offlineEarnings = timeDifference * avgIncome * FarmStats.OFFLINE_BONUS.get(f);
-
-			UEcoBank.add(player, offlineEarnings);
-			player.sendMessage(ChatColor.GREEN + "While you were offline for "
-					+ FarmStatTime.timeFromSeconds((int) (timeDifference / 60)) + ", you earnt $"
-					+ UEcoFormatter.charFormat(offlineEarnings));
-		}
-
-		FarmScoreboards.addPlayer(player);
-
+		Items.give(player);
+		
+		AchievementData.addPlayer(player);
 	}
 
 	private static void quitStuff(Player player) {
 		PlayerFarms.get(player).lastLogin = System.currentTimeMillis();
 		FarmIO.save(PlayerFarms.get(player));
-		FarmScoreboards.removePlayer(player);
 		AchievementData.removePlayer(player);
 	}
 }
