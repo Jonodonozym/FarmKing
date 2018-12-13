@@ -7,8 +7,9 @@ import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.farmKing.element.ElementSelectInventory;
+import jdz.farmKing.element.ElementUpgradeInventory;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.PlayerFarms;
+import jdz.farmKing.farm.data.PlayerFarms;
 import jdz.farmKing.stats.EventFlag;
 import net.md_5.bungee.api.ChatColor;
 
@@ -32,10 +33,10 @@ public class FarmAlignmentsCommand extends SubCommand {
 		}
 
 		if (farm.elementInventory == null)
-			player.openInventory(ElementSelectInventory.alignSelectInventory);
+			ElementSelectInventory.getInstance().open(player);
 		else {
 			farm.elementInventory.update();
-			player.openInventory(farm.elementInventory.inventory);
+			ElementUpgradeInventory.getInstance().open(player);
 		}
 	}
 }

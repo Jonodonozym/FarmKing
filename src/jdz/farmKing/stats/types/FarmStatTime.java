@@ -19,7 +19,7 @@ public class FarmStatTime extends FarmStatBuffered {
 		return timeFromSeconds((long) val);
 	}
 
-	private String timeFromSeconds(long totalSeconds) {
+	public static String timeFromSeconds(long totalSeconds) {
 		long days = totalSeconds / 86400;
 		long hours = (totalSeconds % 86400) / 3600;
 		long minutes = ((totalSeconds % 86400) % 3600) / 60;

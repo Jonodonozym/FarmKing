@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
+import jdz.UEconomy.events.BalanceChangeEvent;
 import jdz.farmKing.FarmKing;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.stats.types.FarmStat;
@@ -52,17 +53,17 @@ public abstract class FarmStats extends BufferedStatType {
 		StatsManager.getInstance().addTypes(plugin, getValues().toArray(new StatType[0]));
 	}
 
-	public static final FarmStatBuffered LEVEL = new FarmStatDouble("Farm Level");
-	public static final FarmStatBuffered GEMS = new FarmStatDouble("Farm Gems");
+	public static final FarmStatBuffered LEVEL = new FarmStatDouble("Level");
+	public static final FarmStatBuffered GEMS = new FarmStatDouble("Gems");
 
-	public static FarmStatBuffered CROP_TYPE(int index) {
+	public static FarmStatBuffered CROP_AMOUNT(int index) {
 		return CropQuantityTypes.get(index);
 	}
 
 	private static final List<FarmStatBuffered> CropQuantityTypes = new ArrayList<FarmStatBuffered>();
 	static {
 		for (int i = 0; i < 16; i++)
-			CropQuantityTypes.add(new FarmStatDouble("Farm crop " + i, false));
+			CropQuantityTypes.add(new FarmStatDouble("crop " + i, false));
 	}
 
 	public static FarmStatBuffered SEEDS(Element element) {
@@ -71,23 +72,29 @@ public abstract class FarmStats extends BufferedStatType {
 
 	private static final Map<Element, FarmStatBuffered> CurrentSeedTypes = new HashMap<Element, FarmStatBuffered>();
 	static {
-		for (Element element : Element.elements.values())
-			CurrentSeedTypes.put(element, new FarmStatDouble("Farm seeds " + element.name, false));
+		for (Element element : Element.values())
+			CurrentSeedTypes.put(element, new FarmStatDouble("seeds " + element.name, false));
 	}
 
-	public static final FarmStatBuffered ONLINE_TIME = new FarmStatTime("Farm Online Playtime", false);
+	public static final FarmStatBuffered ONLINE_TIME = new FarmStatTime("Online time", false);
 	static {
 		Bukkit.getScheduler().runTaskTimer(FarmKing.getInstance(), () -> {
 			for (Player player : Bukkit.getOnlinePlayers())
 				ONLINE_TIME.add(player, 1);
 		}, 20, 20);
 	};
-	public static final FarmStatBuffered OFFLINE_TIME = new FarmStatTime("Farm Offline Playtime", false);
-	public static final FarmStatLinked PLAY_TIME = new FarmStatLinked("Farm Total Playtime", false, (f) -> {
+	public static final FarmStatBuffered OFFLINE_TIME = new FarmStatTime("Offline time", false);
+	public static final FarmStatLinked PLAY_TIME = new FarmStatLinked("Play time", false, (f) -> {
 		return ONLINE_TIME.get(f) + OFFLINE_TIME.get(f);
 	});
 
-	public static final FarmStatBuffered EARNINGS = new FarmStatDouble("Farm Earnings", false);
+	public static final FarmStatBuffered EARNINGS = new FarmStatDouble("Earnings", false) {
+		@EventHandler
+		public void onBalanceChange(BalanceChangeEvent event) {
+			if (event.getOldBalance() < event.getNewBalance())
+				add(event.getPlayer(), event.getNewBalance() - event.getOldBalance());
+		}
+	};
 
 	public static FarmStatBuffered SEEDS_TOTAL(Element element) {
 		return totalSeeds.get(element);
@@ -95,8 +102,8 @@ public abstract class FarmStats extends BufferedStatType {
 
 	private static final Map<Element, FarmStatBuffered> totalSeeds = new HashMap<Element, FarmStatBuffered>();
 	static {
-		for (final Element element : Element.elements.values())
-			totalSeeds.put(element, new FarmStatDouble("Farm seeds total " + element.name, false) {
+		for (final Element element : Element.values())
+			totalSeeds.put(element, new FarmStatDouble("seeds total " + element.name, false) {
 				@EventHandler
 				public void onStatChange(StatChangeEvent event) {
 					if (event.getType() != SEEDS(element))
@@ -109,20 +116,22 @@ public abstract class FarmStats extends BufferedStatType {
 			});
 	}
 
-	public static final FarmStatLinked ALL_SEEDS_TOTAL = new FarmStatLinked("Farm seeds total", false, (f) -> {
+	public static final FarmStatLinked ALL_SEEDS_TOTAL = new FarmStatLinked("seeds total", false, (f) -> {
 		double val = 0;
-		for (final Element element : Element.elements.values())
+		for (final Element element : Element.values())
 			val += SEEDS_TOTAL(element).get(f);
 		return val;
 	});
 
-	public static final FarmStatBuffered WORKERS = new FarmStatDouble("Farm Workers", false);
+	public static final FarmStatBuffered WORKERS = new FarmStatDouble("Workers", false);
 
-	public static final FarmStatBuffered CLICKS = new FarmStatDouble("Farm Clicks", false);
-	public static final FarmStatBuffered CLICKS_AUTO = new FarmStatDouble("Farm Clicks Manual", false);
-	public static final FarmStatBuffered CLICKS_MANUAL = new FarmStatDouble("Farm Clicks Auto", false);
+	public static final FarmStatBuffered CLICKS_AUTO = new FarmStatDouble("Clicks Manual", false);
+	public static final FarmStatBuffered CLICKS_MANUAL = new FarmStatDouble("Clicks Auto", false);
+	public static final FarmStatLinked CLICKS = new FarmStatLinked("Clicks", false, (f) -> {
+		return CLICKS_AUTO.get(f) + CLICKS_MANUAL.get(f);
+	});
 
-	public static final FarmStatLinked OFFLINE_BONUS = new FarmStatLinked("Farm Offline Bonus", false, (f) -> {
+	public static final FarmStatLinked OFFLINE_BONUS = new FarmStatLinked("Offline Bonus", false, (f) -> {
 		return 0; // TODO
 	});
 }

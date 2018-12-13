@@ -26,7 +26,7 @@ public enum EventFlag {
 
 		player.sendMessage(messages);
 		player.getInventory().addItem(Items.alignmentItem);
-		FarmScoreboards.addSeeds(player);
+		FarmScoreboards.addSeedSection(player);
 	}),
 
 	WORKERS_UNLOCKED((farm) -> {
@@ -41,7 +41,7 @@ public enum EventFlag {
 				ChatColor.DARK_GREEN + "=============================================" };
 		
 		player.sendMessage(messages);
-		FarmScoreboards.addWorkers(player);
+		FarmScoreboards.addWorkerSection(player);
 	});
 
 	private final Predicate<Farm> condition;

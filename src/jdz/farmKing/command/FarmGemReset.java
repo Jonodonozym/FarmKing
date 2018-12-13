@@ -13,7 +13,7 @@ import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.farmKing.FarmKing;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.PlayerFarms;
+import jdz.farmKing.farm.data.PlayerFarms;
 import net.md_5.bungee.api.ChatColor;
 
 @CommandLabel("reset")

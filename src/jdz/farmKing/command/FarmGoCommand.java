@@ -8,7 +8,7 @@ import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.PlayerFarms;
+import jdz.farmKing.farm.data.PlayerFarms;
 
 @CommandLabel("go")
 public class FarmGoCommand extends SubCommand {
