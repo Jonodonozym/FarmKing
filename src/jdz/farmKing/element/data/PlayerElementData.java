@@ -1,34 +1,39 @@
 
 package jdz.farmKing.element.data;
 
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import jdz.farmKing.element.Element;
-import jdz.farmKing.element.ElementMetaData;
-import jdz.farmKing.farm.Farm;
+import static jdz.farmKing.element.ElementMetaData.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Setter;
 
 @Data
+@AllArgsConstructor
 public class PlayerElementData {
-	private final OfflinePlayer player;
-	private final Farm farm;
-	private Element element;
-	private final boolean[] tiersBought = new boolean[ElementMetaData.numTiers];
-	private final boolean[] upgradesBought = new boolean[ElementMetaData.numUpgrades];
-	
-	public boolean hasBoughtTier(int tier) {
-		return tiersBought[tier];
+	private final Player player;
+	@Setter private Element element;
+	private final Boolean[] tiersBought;
+	private final Boolean[] upgradesBought;
+
+	public PlayerElementData(Player player) {
+		this(player, null, new Boolean[numTiers], new Boolean[upgradesPerTier * numTiers]);
 	}
 
 	public void setBoughtTier(int tier) {
 		tiersBought[tier] = true;
 	}
-	
-	public void setBoughtUpgrade(int index) {
-		upgradesBought[index] = true;
+
+	public boolean hasBoughtTier(int tier) {
+		return tiersBought[tier];
 	}
-	
-	public boolean hasBoughtUpgrade(int index) {
-		return upgradesBought[index];
+
+	public void setBoughtUpgrade(int tier, int index) {
+		upgradesBought[tier * upgradesPerTier + index] = true;
+	}
+
+	public boolean hasBoughtUpgrade(int tier, int index) {
+		return upgradesBought[tier * upgradesPerTier + index];
 	}
 }

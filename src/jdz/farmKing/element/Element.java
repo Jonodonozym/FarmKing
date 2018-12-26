@@ -10,7 +10,6 @@
 
 package jdz.farmKing.element;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -33,10 +32,17 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public class Element {
-	public static Collection<Element> values() {
-		return ElementMetaData.values();
+	public static List<Element> values() {
+		return ElementMetaData.getElements();
 	}
-	
+
+	public static Element valueOf(String string) {
+		for (Element element : values())
+			if (element.name.equals(string))
+				return element;
+		return null;
+	}
+
 	public final String name;
 	public final String description;
 	public final Material icon;
@@ -46,7 +52,7 @@ public class Element {
 	@Getter public final List<Upgrade> upgrades;
 	@Getter public final Upgrade powerShard;
 
-	public Upgrade getUpgrade(int i) {
-		return upgrades.get(i);
+	public Upgrade getUpgrade(int tier, int index) {
+		return upgrades.get(tier * ElementMetaData.upgradesPerTier + index);
 	}
 }

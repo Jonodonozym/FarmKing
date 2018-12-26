@@ -2,10 +2,8 @@
 package jdz.farmKing.element;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,19 +11,24 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import jdz.bukkitUtils.fileIO.FileExporter;
 import jdz.farmKing.FarmKing;
+import lombok.Getter;
 
 public class ElementMetaData {
 	public static final int numTiers = 3, upgradesPerTier = 3;
 	public static final int numUpgrades = numTiers * upgradesPerTier;
+	
+	@Getter private static final List<Element> elements = new ArrayList<>();
 
-	public static List<Double> tierCost;
-	public static List<Double> upgradeCost;
-	public static double powerShardCost;
+	private static List<Double> tierCost;
+	private static List<Double> upgradeCost;
+	@Getter private static double powerShardCost;
+	
+	public static double getTierCost(int tier) {
+		return tierCost.get(tier);
+	}
 
-	private static final Map<String, Element> elements = new HashMap<String, Element>();;
-
-	public static Collection<Element> values() {
-		return elements.values();
+	public static double getUpgradeCost(int tier, int upgrade) {
+		return upgradeCost.get(tier * upgradesPerTier + upgrade);
 	}
 
 	public static void load(FarmKing plugin) {
@@ -49,8 +52,7 @@ public class ElementMetaData {
 				continue;
 
 			ConfigurationSection section = config.getConfigurationSection(key);
-			elements.put(key, ElementParser.parse(section, key));
+			elements.add(ElementParser.parse(section, key));
 		}
 	}
-
 }

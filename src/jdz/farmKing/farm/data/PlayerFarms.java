@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import jdz.farmKing.farm.Farm;
@@ -17,12 +18,15 @@ public class PlayerFarms {
 		return playerToFarm.containsKey(player);
 	}
 
-	public static Farm get(Player player) {
-		if (!hasFarm(player)) {
+	public static Farm get(OfflinePlayer player) {
+		if (!player.isOnline())
+			return FarmDB.getInstance().load(player);
+
+		if (!hasFarm(player.getPlayer())) {
 			Farm farm = FarmDB.getInstance().hasFarm(player) ? FarmDB.getInstance().load(player)
 					: FarmBuffer.removeFirst();
 			farm.setOwner(player);
-			playerToFarm.put(player, farm);
+			playerToFarm.put(player.getPlayer(), farm);
 		}
 		return playerToFarm.get(player);
 	}
