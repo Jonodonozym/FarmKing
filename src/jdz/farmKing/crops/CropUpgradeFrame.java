@@ -29,6 +29,7 @@ public class CropUpgradeFrame extends FarmInteractableItemFrame {
 		this.bought = bought;
 	}
 
+	@Override
 	public void update(ItemFrame frame) {
 		if (bought)
 			frame.setItem(getBoughtItem());
@@ -85,7 +86,7 @@ public class CropUpgradeFrame extends FarmInteractableItemFrame {
 
 		UEcoBank.subtract(player, upgradePrice);
 
-		this.bought = true;
+		bought = true;
 		update();
 		writeMetadata(getFrame());
 

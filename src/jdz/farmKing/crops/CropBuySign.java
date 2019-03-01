@@ -17,14 +17,17 @@ public class CropBuySign extends FarmInteractableSign {
 		super(crop.getFarm().getId(), crop.getType().getId(), direction);
 	}
 
+	@Override
 	public void generate(Sign sign) {
 		sign.setLine(1, getCrop().getType().getName());
 	}
 
+	@Override
 	public void update(Sign sign) {
 		sign.setLine(2, "Buy " + getFarm().buyQuantity);
 	}
 
+	@Override
 	protected Location getLocation() {
 		Direction direction = Direction.values()[this.direction];
 		return getCrop().getLocation().clone().add(direction.getDx(), 0, direction.getDz());
