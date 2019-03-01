@@ -26,7 +26,7 @@ public class CropVisualisationGenerator {
 		if (crop.getDirection().getDx() == 0) {
 			x = crop.getLocation().getBlockX() - 2;
 			width = 5;
-			z = crop.getLocation().getBlockZ() + direction.getDz() * (4 + minRow);
+			z = crop.getLocation().getBlockZ() + direction.getDz() * (distanceToDirt() + minRow);
 			length = generatedRows;
 			if (direction.getDz() < 0)
 				z -= length;
@@ -34,7 +34,7 @@ public class CropVisualisationGenerator {
 		else {
 			z = crop.getLocation().getBlockZ() - 2;
 			length = 5;
-			x = crop.getLocation().getBlockX() + direction.getDx() * (4 + minRow);
+			x = crop.getLocation().getBlockX() + direction.getDx() * (distanceToDirt() + minRow);
 			width = generatedRows;
 			if (crop.getDirection().opposite().getDx() < 0)
 				x -= width;
@@ -44,7 +44,16 @@ public class CropVisualisationGenerator {
 	}
 
 	private int getRowFromQuantity(int quantity) {
-		return Math.min(quantity / 20, 12) + 1;
+		return Math.min(quantity / 20, getMaxRow()) + 1;
+	}
+
+	private int getMaxRow() {
+		// TODO dynamic size based on schematic, could calculate in constructor
+		return 12;
+	}
+
+	private int distanceToDirt() {
+		return 4;
 	}
 
 	@SuppressWarnings("deprecation")
