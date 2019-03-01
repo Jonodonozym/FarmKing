@@ -1,5 +1,5 @@
 
-package jdz.farmKing.farm.gen;
+package jdz.farmKing.farm.generation;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +18,11 @@ import com.sk89q.worldedit.world.DataException;
 
 import jdz.farmKing.FarmKing;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.gen.FarmSchema.FarmSchemaFormatException;
+import jdz.farmKing.farm.generation.FarmSchema.FarmSchemaFormatException;
 
 @SuppressWarnings("deprecation")
 public class FarmGenerator {
-	public static final int IslandWidth = 150, IslandLength = 150, IslandHeight = 100, spawnBorder = IslandWidth * 2;
+	public static final int ISLAND_WIDTH = 150, ISLAND_LENGTH = 150, ISLAND_HEIGHT = 100, SPAWN_BORDER = ISLAND_WIDTH * 2;
 
 	public static List<FarmSchema> schematics = new ArrayList<FarmSchema>();
 
@@ -53,10 +53,10 @@ public class FarmGenerator {
 		while (temp >= 12 + row * 4)
 			temp -= 12 + (row++) * 4;
 
-		int x1 = -spawnBorder - IslandWidth * (row + 1);
-		int x2 = spawnBorder + IslandWidth * row;
-		int z1 = -spawnBorder - IslandHeight * (row + 1);
-		int z2 = spawnBorder + IslandHeight * row;
+		int x1 = -SPAWN_BORDER - ISLAND_WIDTH * (row + 1);
+		int x2 = SPAWN_BORDER + ISLAND_WIDTH * row;
+		int z1 = -SPAWN_BORDER - ISLAND_HEIGHT * (row + 1);
+		int z2 = SPAWN_BORDER + ISLAND_HEIGHT * row;
 
 		int dx = 0, dz = 0, x = 0, z = 0;
 		switch (temp / 4) {
@@ -83,8 +83,8 @@ public class FarmGenerator {
 		}
 
 		int remainder = (temp / 4) * 4 - temp;
-		int xx = x + dx * remainder * IslandWidth;
-		int zz = z + dz * remainder * IslandLength;
+		int xx = x + dx * remainder * ISLAND_WIDTH;
+		int zz = z + dz * remainder * ISLAND_LENGTH;
 
 		FarmSchema schematic = getSchematicForLevel(0);
 		Vector origin = getOrigin(xx, zz, schematic);
@@ -102,7 +102,7 @@ public class FarmGenerator {
 	}
 
 	private static Vector getOrigin(int worldX, int worldZ, FarmSchema schematic) {
-		return new Vector(worldX, IslandHeight, worldZ).subtract(schematic.getSchematic().getOffset());
+		return new Vector(worldX, ISLAND_HEIGHT, worldZ).subtract(schematic.getSchematic().getOffset());
 	}
 
 	private static void pasteSchema(FarmSchema schematic, Vector location, World world) {

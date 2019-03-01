@@ -1,5 +1,5 @@
 
-package jdz.farmKing.farm.gen;
+package jdz.farmKing.farm.generation;
 
 import java.util.LinkedList;
 import java.util.List;
