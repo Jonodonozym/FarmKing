@@ -9,7 +9,11 @@ import org.bukkit.block.Sign;
 import jdz.farmKing.utils.Direction;
 
 public abstract class FarmInteractableSign extends FarmInteractable {
-	private int direction;
+	protected int direction;
+	
+	public FarmInteractableSign(Sign sign) {
+		readMetadata(sign);
+	}
 
 	public FarmInteractableSign(int farmId, Direction direction) {
 		this(farmId, 0, direction);
@@ -36,12 +40,18 @@ public abstract class FarmInteractableSign extends FarmInteractable {
 
 	@Override
 	public void update() {
-		update(getSign());
+		Sign sign = getSign();
+		update(sign);
+		sign.update(true);
 	}
 
 	@Override
 	public void delete() {
 		getLocation().getBlock().setType(Material.AIR);
+	}
+	
+	protected Direction getDirection() {
+		return Direction.values()[direction];
 	}
 
 	protected abstract void generate(Sign sign);

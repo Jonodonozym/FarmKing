@@ -10,7 +10,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public abstract class FarmInteractableItemFrame extends FarmInteractable {
-	protected int direction;
+	private int direction;
+
+	public FarmInteractableItemFrame(ItemFrame frame) {
+		readMetadata(frame);
+	}
 
 	public FarmInteractableItemFrame(int farmId, Direction direction) {
 		this(farmId, 0, direction);
@@ -50,6 +54,10 @@ public abstract class FarmInteractableItemFrame extends FarmInteractable {
 			if (entity.getLocation().distance(location) < 0.1 && entity instanceof ItemFrame)
 				return (ItemFrame) entity;
 		return null;
+	}
+
+	protected Direction getDirection() {
+		return Direction.values()[direction];
 	}
 
 	protected abstract Location getLocation();
