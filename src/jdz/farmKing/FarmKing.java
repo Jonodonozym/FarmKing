@@ -5,9 +5,12 @@ import java.io.File;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import jdz.bukkitUtils.interactableObject.InteractableObjectFactory;
 import jdz.farmKing.achievements.AchievementInventories;
 import jdz.farmKing.command.FarmCommandExecutor;
+import jdz.farmKing.crops.CropBuySign;
 import jdz.farmKing.crops.CropType;
+import jdz.farmKing.crops.CropUpgradeFrame;
 import jdz.farmKing.element.ElementMetaData;
 import jdz.farmKing.element.data.PlayerElementDataManager;
 import jdz.farmKing.element.gui.ElementSelectInventory;
@@ -15,8 +18,9 @@ import jdz.farmKing.element.gui.ElementUpgradeInventory;
 import jdz.farmKing.farm.FarmIncomeGenerator;
 import jdz.farmKing.farm.FarmScoreboards;
 import jdz.farmKing.farm.data.PlayerFarms;
-import jdz.farmKing.farm.gen.FarmBuffer;
-import jdz.farmKing.farm.grass.GrassData;
+import jdz.farmKing.farm.generation.FarmBuffer;
+import jdz.farmKing.farm.grass.GrassBreakListener;
+import jdz.farmKing.farm.grass.GrassUpgradeFrame;
 import jdz.farmKing.listeners.InventoryProtector;
 import jdz.farmKing.listeners.Invincibility;
 import jdz.farmKing.listeners.PlayerJoinQuit;
@@ -41,13 +45,12 @@ public class FarmKing extends JavaPlugin {
 		File file = new File(getDataFolder() + File.separator + "config.yml");
 		if (!file.exists())
 			this.saveDefaultConfig();
-		CropType.initializeCropData(getConfig());
+		CropType.loadFromConfig(getConfig());
 
 		new FarmCommandExecutor(this).register();
 
 		registerEvents();
 
-		GrassData.init();
 		FarmBuffer.fetchBuffer();
 		PlayerFarms.respawnTallGrass();
 
@@ -57,7 +60,7 @@ public class FarmKing extends JavaPlugin {
 
 		for (Player p : getServer().getOnlinePlayers()) {
 			PlayerJoinQuit.playerJoinSetup(p);
-			FarmIO.load(p);
+			PlayerFarms.get(p);
 		}
 	}
 
@@ -68,6 +71,13 @@ public class FarmKing extends JavaPlugin {
 		new WorldGuard().registerEvents(this);
 		new FarmScoreboards().registerEvents(this);
 		new FarmIncomeGenerator().registerEvents(this);
+		new GrassBreakListener().registerEvents(this);
+	}
+	
+	public void registerInteractables() {
+		new InteractableObjectFactory<CropBuySign>().register(this);
+		new InteractableObjectFactory<CropUpgradeFrame>().register(this);
+		new InteractableObjectFactory<GrassUpgradeFrame>().register(this);
 	}
 
 }
