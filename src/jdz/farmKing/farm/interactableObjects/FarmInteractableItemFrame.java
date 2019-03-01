@@ -1,5 +1,5 @@
 
-package jdz.farmKing.farm;
+package jdz.farmKing.farm.interactableObjects;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

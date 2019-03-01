@@ -1,11 +1,12 @@
 
-package jdz.farmKing.farm;
+package jdz.farmKing.farm.interactableObjects;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import jdz.bukkitUtils.interactableObject.InteractableObject;
 import jdz.farmKing.crops.Crop;
+import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.data.PlayerFarms;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
