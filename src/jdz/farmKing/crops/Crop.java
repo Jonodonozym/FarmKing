@@ -25,6 +25,7 @@ public class Crop {
 	private final CropInfoHologram hologram;
 	private final CropBuySign buySign;
 	private final CropInfoSign infoSign;
+	private final CropVisualisationGenerator visualGen;
 
 	@Getter @Setter private double incomeMultiplier = 1;
 	@Getter @Setter private int costMultiplierReductionLevel = 0;
@@ -43,6 +44,7 @@ public class Crop {
 		hologram = new CropInfoHologram(this);
 		buySign = new CropBuySign(this, getDirection());
 		infoSign = new CropInfoSign(this, getDirection());
+		visualGen = new CropVisualisationGenerator(this);
 
 		if (isGenerated())
 			hologram.generate();
@@ -102,6 +104,7 @@ public class Crop {
 		double price = getBuyCost(amount);
 		if (UEcoBank.has(farm.getOwner(), price)) {
 			UEcoBank.subtract(farm.getOwner(), price);
+			visualGen.generatePlants(quantity, quantity + amount.getAmount());
 			quantity += amount.getAmount();
 			return true;
 		}
@@ -122,7 +125,7 @@ public class Crop {
 		return type.getBaseIncome() * quantity * CropUpgradeCalculator.getIncomeMultiplier(level) * incomeMultiplier;
 	}
 
-	private Direction getDirection() {
+	public Direction getDirection() {
 		return farm.getSchematic().getCropDirection(type.getId());
 	}
 
