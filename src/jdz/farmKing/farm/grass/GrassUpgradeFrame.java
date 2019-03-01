@@ -4,6 +4,7 @@ package jdz.farmKing.farm.grass;
 import static jdz.UEconomy.UEcoFormatter.charFormat;
 import static org.bukkit.ChatColor.RED;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
@@ -11,11 +12,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import jdz.UEconomy.data.UEcoBank;
+import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.interactableObjects.FarmInteractableItemFrame;
 
 public class GrassUpgradeFrame extends FarmInteractableItemFrame {
 	private boolean isDirect;
 	private int level;
+	private boolean bought;
+
+	public GrassUpgradeFrame(Farm farm, int level, boolean isDirect) {
+
+	}
 
 	public void update(ItemFrame frame) {
 		frame.setItem(getItemStack());
@@ -42,9 +50,28 @@ public class GrassUpgradeFrame extends FarmInteractableItemFrame {
 
 	@Override
 	protected void interact(Player player) {
-		// TODO Auto-generated method stub
+		if (bought)
+			return;
+
 		Grass grass = getFarm().getGrass();
+
+		double cost = isDirect ? GrassData.getDirectCost(level) : GrassData.getPercentCost(level);
+		if (!UEcoBank.has(player, cost)) {
+			player.sendMessage(ChatColor.RED + "You don't have enough money to purchase that upgrade!");
+			return;
+		}
+		UEcoBank.subtract(player, cost);
+
+		bought = true;
+		writeMetadata(getFrame());
+		update();
+
+		if (level < 5)
+			new GrassUpgradeFrame(getFarm(), level + 1, isDirect).generate();
+
+		if (isDirect)
+			grass.setDirectLevel(level + 1);
+		else
+			grass.setPercentLevel(level + 1);
 	}
-
-
 }

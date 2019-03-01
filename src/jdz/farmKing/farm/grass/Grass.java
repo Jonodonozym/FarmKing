@@ -21,8 +21,8 @@ import jdz.UEconomy.data.UEcoBank;
 import jdz.farmKing.FarmKing;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.gen.FarmGenerator;
-import jdz.farmKing.farm.gen.FarmSchema;
+import jdz.farmKing.farm.generation.FarmGenerator;
+import jdz.farmKing.farm.generation.FarmSchema;
 import jdz.farmKing.stats.EventFlag;
 import jdz.farmKing.stats.FarmStats;
 import lombok.Data;
@@ -37,8 +37,8 @@ public class Grass {
 	@Getter @Setter private double baseGrassValue = 1;
 
 	private final Farm farm;
-	@Getter private int directLevel = 0;
-	@Getter private int percentLevel = 0;
+	@Setter @Getter private int directLevel = 0;
+	@Setter @Getter private int percentLevel = 0;
 	private double incomePerClick = 0;
 
 	public double updateIncome(Farm farm) {
@@ -107,13 +107,13 @@ public class Grass {
 	@SuppressWarnings("deprecation")
 	public void respawn() {
 		FarmSchema schema = FarmGenerator.getSchematicForLevel(farm.level);
-		World world = farm.spawn.getWorld();
+		World world = farm.getSpawn().getWorld();
 
-		int xMax = farm.x + schema.getSchematic().getWidth();
-		int zMax = farm.z + schema.getSchematic().getLength();
+		int xMax = farm.getOrigin().getBlockX() + schema.getSize().getBlockX();
+		int zMax = farm.getOrigin().getBlockZ() + schema.getSize().getBlockZ();
 		int y = schema.getGrassHeight();
-		for (int x = farm.x; x < xMax; x++)
-			for (int z = farm.z; z < zMax; z++)
+		for (int x = farm.getOrigin().getBlockX(); x < xMax; x++)
+			for (int z = farm.getOrigin().getBlockZ(); z < zMax; z++)
 				if (world.getBlockAt(x, y, z).getType() == Material.GRASS) {
 					Block b = world.getBlockAt(x, y + 1, z);
 					b.setType(Material.LONG_GRASS);

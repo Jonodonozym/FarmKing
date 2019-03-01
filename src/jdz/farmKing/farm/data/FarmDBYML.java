@@ -48,8 +48,8 @@ public class FarmDBYML implements FarmDB {
 	@Override
 	public void save(Farm farm) {
 		ConfigurationSection section = getSection(farm);
-		section.set("x", farm.x);
-		section.set("z", farm.z);
+		section.set("x", farm.getOrigin().getBlockX());
+		section.set("z", farm.getOrigin().getBlockZ());
 		setOwner(farm, farm.getOwner());
 		saveFile(farm);
 	}
@@ -67,7 +67,7 @@ public class FarmDBYML implements FarmDB {
 			section.set("owner", owner.getUniqueId());
 		else
 			section.set("owner", null);
-		
+
 		saveFile(farm);
 	}
 

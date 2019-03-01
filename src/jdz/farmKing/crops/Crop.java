@@ -17,7 +17,6 @@ import lombok.Setter;
 public class Crop {
 	@Getter private final Farm farm;
 	@Getter private final CropType type;
-	@Getter private final Location location;
 
 	@Getter private int quantity = 0;
 	@Getter private boolean generated = false;
@@ -30,14 +29,13 @@ public class Crop {
 	@Getter @Setter private double incomeMultiplier = 1;
 	@Getter @Setter private int costMultiplierReductionLevel = 0;
 
-	public Crop(Farm farm, CropType cropType, Location location) {
-		this(farm, cropType, location, 0, 0, false);
+	public Crop(Farm farm, CropType cropType) {
+		this(farm, cropType, 0, 0, false);
 	}
 
-	public Crop(Farm farm, CropType cropType, Location location, int level, int quantity, boolean isGenerated) {
+	public Crop(Farm farm, CropType cropType, int level, int quantity, boolean isGenerated) {
 		this.farm = farm;
 		type = cropType;
-		this.location = location;
 		this.quantity = quantity;
 		generated = isGenerated;
 		this.level = level;
@@ -58,6 +56,7 @@ public class Crop {
 		generated = true;
 
 		// generating plant
+		Location location = getLocation();
 		int x = location.getBlockX(), y = location.getBlockY(), z = location.getBlockZ();
 		Block base = world.getBlockAt(x, y, z);
 
@@ -124,6 +123,10 @@ public class Crop {
 	}
 
 	private Direction getDirection() {
-		return type.getId() < 8 ? Direction.EAST : Direction.WEST;
+		return farm.getSchematic().getCropDirection(type.getId());
+	}
+
+	public Location getLocation() {
+		return farm.getSchematic().getCropLocation(farm, type.getId());
 	}
 }
