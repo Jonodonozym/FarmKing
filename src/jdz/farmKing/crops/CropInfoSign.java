@@ -32,12 +32,12 @@ public class CropInfoSign {
 
 		sign = (Sign) signBlock.getState();
 		sign.setLine(0, "$ per second:");
-		update(0);
+		update();
 	}
 
-	public void update(double incomePerPlant) {
-		double totalIncome = incomePerPlant * crop.getQuantity();
-		sign.setLine(1, "Plant: $" + UEcoFormatter.charFormat(incomePerPlant, 4));
+	public void update() {
+		double totalIncome = crop.getIncome();
+		sign.setLine(1, "Plant: $" + UEcoFormatter.charFormat(totalIncome / crop.getQuantity(), 4));
 		sign.setLine(2, "Total: $" + UEcoFormatter.charFormat(totalIncome, 4));
 		sign.update(true);
 	}

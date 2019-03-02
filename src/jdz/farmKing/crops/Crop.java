@@ -1,5 +1,7 @@
 package jdz.farmKing.crops;
 
+import static jdz.farmKing.upgrades.UpgradeBonus.*;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,38 +10,33 @@ import org.bukkit.block.Block;
 import jdz.UEconomy.data.UEcoBank;
 import jdz.farmKing.crops.calculators.CropCostCalculator;
 import jdz.farmKing.crops.calculators.CropUpgradeCalculator;
+import jdz.farmKing.element.data.PlayerElementData;
+import jdz.farmKing.element.data.PlayerElementDataManager;
 import jdz.farmKing.farm.Farm;
+import jdz.farmKing.stats.FarmStats;
 import jdz.farmKing.utils.BuyAmount;
 import jdz.farmKing.utils.Direction;
 import lombok.Getter;
-import lombok.Setter;
 
 public class Crop {
 	@Getter private final Farm farm;
 	@Getter private final CropType type;
 
-	@Getter private int quantity = 0;
 	@Getter private boolean generated = false;
-	@Getter private int level = 0;
 
 	private final CropInfoHologram hologram;
 	private final CropBuySign buySign;
 	private final CropInfoSign infoSign;
 	private final CropVisualisationGenerator visualGen;
 
-	@Getter @Setter private double incomeMultiplier = 1;
-	@Getter @Setter private int costMultiplierReductionLevel = 0;
-
 	public Crop(Farm farm, CropType cropType) {
-		this(farm, cropType, 0, 0, false);
+		this(farm, cropType, false);
 	}
 
-	public Crop(Farm farm, CropType cropType, int level, int quantity, boolean isGenerated) {
+	public Crop(Farm farm, CropType cropType, boolean isGenerated) {
 		this.farm = farm;
 		type = cropType;
-		this.quantity = quantity;
 		generated = isGenerated;
-		this.level = level;
 
 		hologram = new CropInfoHologram(this);
 		buySign = new CropBuySign(this, getDirection());
@@ -51,7 +48,7 @@ public class Crop {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void generateStuff(World world) {
+	public void generate(World world) {
 		if (generated)
 			return;
 
@@ -80,8 +77,14 @@ public class Crop {
 		buySign.generate();
 		infoSign.generate();
 
-		for (int i = 0; i < level; i++)
+		for (int i = 0; i < getLevel(); i++)
 			new CropUpgradeFrame(this, getDirection(), i, true).generate();
+	}
+
+	public void update() {
+		hologram.update();
+		buySign.update();
+		infoSign.update();
 	}
 
 	public void reset() {
@@ -89,40 +92,54 @@ public class Crop {
 			return;
 
 		generated = false;
-		quantity = 0;
+		setQuantity(0);
 
 		hologram.delete();
 		buySign.delete();
 		infoSign.delete();
 
-		for (int i = 0; i < level + 1; i++)
+		for (int i = 0; i < getLevel() + 1; i++)
 			new CropUpgradeFrame(this, getDirection(), i, true).delete();
-		level = 0;
+		setLevel(0);
 	}
 
 	public boolean buy(BuyAmount amount) {
 		double price = getBuyCost(amount);
 		if (UEcoBank.has(farm.getOwner(), price)) {
 			UEcoBank.subtract(farm.getOwner(), price);
-			visualGen.generatePlants(quantity, quantity + amount.getAmount());
-			quantity += amount.getAmount();
+			visualGen.generatePlants(getQuantity(), getQuantity() + amount.getAmount());
+			if (getQuantity() == 0)
+				farm.generateCrop(type.getId() + 1);
+			setQuantity(getQuantity() + amount.getAmount());
 			return true;
 		}
 		return false;
 	}
 
 	public void levelUp() {
-		level++;
-		if (level < 10)
-			new CropUpgradeFrame(this, getDirection(), level, true).generate();
+		FarmStats.CROP_LEVEL(type.getId()).add(farm, 1);
+		if (getLevel() < 10)
+			new CropUpgradeFrame(this, getDirection(), getLevel(), true).generate();
 	}
 
 	public double getBuyCost(BuyAmount amount) {
-		return CropCostCalculator.getCost(type.getBasePrice(), costMultiplierReductionLevel, quantity, amount);
+		int costMultiplierReduction = (int) farm.getUpgradeBonus(CROP_COST_MULTIPLIER);
+		if (isElementCrop())
+			costMultiplierReduction += farm.getUpgradeBonus(ELEMENT_CROP_COST_MULTIPLIER);
+		return CropCostCalculator.getCost(type.getBasePrice(), costMultiplierReduction, getQuantity(), amount);
 	}
 
 	public double getIncome() {
-		return type.getBaseIncome() * quantity * CropUpgradeCalculator.getIncomeMultiplier(level) * incomeMultiplier;
+		double income = type.getBaseIncome() * getQuantity() * CropUpgradeCalculator.getIncomeMultiplier(getLevel());
+		income *= farm.getUpgradeBonus(CROP_INCOME);
+		if (isElementCrop())
+			income *= farm.getUpgradeBonus(ELEMENT_CROP_INCOME);
+		return income;
+	}
+
+	public boolean isElementCrop() {
+		PlayerElementData data = PlayerElementDataManager.getInstance().get(farm.getOwner().getPlayer());
+		return data.getElement() != null && data.getElement().hasCrop(type.getMaterial());
 	}
 
 	public Direction getDirection() {
@@ -131,5 +148,21 @@ public class Crop {
 
 	public Location getLocation() {
 		return farm.getSchematic().getCropLocation(farm, type.getId());
+	}
+
+	public int getLevel() {
+		return (int) FarmStats.CROP_LEVEL(type.getId()).get(farm);
+	}
+
+	public int getQuantity() {
+		return (int) FarmStats.CROP_AMOUNT(type.getId()).get(farm);
+	}
+
+	private void setLevel(int level) {
+		FarmStats.CROP_LEVEL(type.getId()).set(farm, level);
+	}
+
+	private void setQuantity(int amount) {
+		FarmStats.CROP_AMOUNT(type.getId()).set(farm, amount);
 	}
 }

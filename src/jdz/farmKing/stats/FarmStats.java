@@ -17,6 +17,7 @@ import jdz.farmKing.element.Element;
 import jdz.farmKing.stats.types.FarmStat;
 import jdz.farmKing.stats.types.FarmStatBuffered;
 import jdz.farmKing.stats.types.FarmStatDouble;
+import jdz.farmKing.stats.types.FarmStatInt;
 import jdz.farmKing.stats.types.FarmStatLinked;
 import jdz.farmKing.stats.types.FarmStatTime;
 import jdz.statsTracker.event.StatChangeEvent;
@@ -34,10 +35,11 @@ public abstract class FarmStats extends BufferedStatType {
 	private static List<FarmStat> getAll() {
 		List<FarmStat> stats = new ArrayList<FarmStat>();
 		stats.addAll(Arrays.asList(LEVEL, GEMS, ONLINE_TIME, OFFLINE_TIME, PLAY_TIME, EARNINGS, ALL_SEEDS_TOTAL,
-				WORKERS, CLICKS, CLICKS_AUTO, CLICKS_MANUAL, OFFLINE_BONUS));
-		stats.addAll(CropQuantityTypes);
-		stats.addAll(CurrentSeedTypes.values());
-		stats.addAll(totalSeeds.values());
+				WORKERS, CLICKS, CLICKS_AUTO, CLICKS_MANUAL));
+		stats.addAll(CropAmounts);
+		stats.addAll(CropLevels);
+		stats.addAll(SeedAmounts.values());
+		stats.addAll(SeedTotalAmounts.values());
 
 		List<FarmStat> maxTypes = new ArrayList<FarmStat>();
 		for (FarmStat stat : stats)
@@ -57,23 +59,33 @@ public abstract class FarmStats extends BufferedStatType {
 	public static final FarmStatBuffered GEMS = new FarmStatDouble("Gems");
 
 	public static FarmStatBuffered CROP_AMOUNT(int index) {
-		return CropQuantityTypes.get(index);
+		return CropAmounts.get(index);
 	}
 
-	private static final List<FarmStatBuffered> CropQuantityTypes = new ArrayList<FarmStatBuffered>();
+	private static final List<FarmStatBuffered> CropAmounts = new ArrayList<FarmStatBuffered>();
 	static {
 		for (int i = 0; i < 16; i++)
-			CropQuantityTypes.add(new FarmStatDouble("crop " + i, false));
+			CropAmounts.add(new FarmStatDouble("crop " + i, false));
+	}
+	
+	public static FarmStatBuffered CROP_LEVEL(int index) {
+		return CropAmounts.get(index);
+	}
+
+	private static final List<FarmStatBuffered> CropLevels = new ArrayList<FarmStatBuffered>();
+	static {
+		for (int i = 0; i < 16; i++)
+			CropAmounts.add(new FarmStatInt("crop level " + i, false));
 	}
 
 	public static FarmStatBuffered SEEDS(Element element) {
-		return CurrentSeedTypes.get(element);
+		return SeedAmounts.get(element);
 	}
 
-	private static final Map<Element, FarmStatBuffered> CurrentSeedTypes = new HashMap<Element, FarmStatBuffered>();
+	private static final Map<Element, FarmStatBuffered> SeedAmounts = new HashMap<Element, FarmStatBuffered>();
 	static {
 		for (Element element : Element.values())
-			CurrentSeedTypes.put(element, new FarmStatDouble("seeds " + element.name, false));
+			SeedAmounts.put(element, new FarmStatDouble("seeds " + element.name, false));
 	}
 
 	public static final FarmStatBuffered ONLINE_TIME = new FarmStatTime("Online time", false);
@@ -97,13 +109,13 @@ public abstract class FarmStats extends BufferedStatType {
 	};
 
 	public static FarmStatBuffered SEEDS_TOTAL(Element element) {
-		return totalSeeds.get(element);
+		return SeedTotalAmounts.get(element);
 	}
 
-	private static final Map<Element, FarmStatBuffered> totalSeeds = new HashMap<Element, FarmStatBuffered>();
+	private static final Map<Element, FarmStatBuffered> SeedTotalAmounts = new HashMap<Element, FarmStatBuffered>();
 	static {
 		for (final Element element : Element.values())
-			totalSeeds.put(element, new FarmStatDouble("seeds total " + element.name, false) {
+			SeedTotalAmounts.put(element, new FarmStatDouble("seeds total " + element.name, false) {
 				@EventHandler
 				public void onStatChange(StatChangeEvent event) {
 					if (event.getType() != SEEDS(element))
@@ -129,9 +141,5 @@ public abstract class FarmStats extends BufferedStatType {
 	public static final FarmStatBuffered CLICKS_MANUAL = new FarmStatDouble("Clicks Auto", false);
 	public static final FarmStatLinked CLICKS = new FarmStatLinked("Clicks", false, (f) -> {
 		return CLICKS_AUTO.get(f) + CLICKS_MANUAL.get(f);
-	});
-
-	public static final FarmStatLinked OFFLINE_BONUS = new FarmStatLinked("Offline Bonus", false, (f) -> {
-		return 0; // TODO
 	});
 }
