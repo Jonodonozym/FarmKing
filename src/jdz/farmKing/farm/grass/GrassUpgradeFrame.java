@@ -22,7 +22,6 @@ public class GrassUpgradeFrame extends FarmInteractableItemFrame {
 	private boolean bought;
 
 	public GrassUpgradeFrame(Farm farm, int level, boolean isDirect) {
-
 	}
 
 	public void update(ItemFrame frame) {

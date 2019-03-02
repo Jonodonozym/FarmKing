@@ -23,8 +23,10 @@ import jdz.farmKing.element.Element;
 import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.generation.FarmGenerator;
 import jdz.farmKing.farm.generation.FarmSchema;
-import jdz.farmKing.stats.EventFlag;
+import jdz.farmKing.stats.OneTimeEvent;
+import jdz.farmKing.upgrades.UpgradeBonus;
 import jdz.farmKing.stats.FarmStats;
+import static jdz.farmKing.upgrades.UpgradeBonus.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,18 +34,17 @@ import lombok.Setter;
 @Data
 public class Grass {
 	public static final int GRASS_RESPAWN_TIMER = 30;
-	@Getter @Setter private double baseSeedChance = 0.05;
-	@Getter @Setter private double baseSeedChanceMultiplier = 1;
-	@Getter @Setter private double baseGrassValue = 1;
+	private double baseSeedChance = 0.05;
+	private double baseGrassValue = 1;
 
 	private final Farm farm;
 	@Setter @Getter private int directLevel = 0;
 	@Setter @Getter private int percentLevel = 0;
-	private double incomePerClick = 0;
+	@Getter private double incomePerClick = 0;
 
-	public double updateIncome(Farm farm) {
+	public double updateIncome() {
 		incomePerClick = baseGrassValue + GrassData.getDirectBonus(directLevel)
-				+ farm.currentIncome * GrassData.getPercentBonus(percentLevel);
+				+ farm.getCropIncome() * GrassData.getPercentBonus(percentLevel);
 		return incomePerClick;
 	}
 
@@ -51,7 +52,9 @@ public class Grass {
 		UEcoBank.add(event.getPlayer(), incomePerClick);
 		FarmStats.CLICKS_MANUAL.add(event.getFarm(), 1);
 
-		Map<Element, Double> seeds = getRandomClickSeeds(event.getFarm(), 1);
+		Map<Element, Double> seeds = getRandomSeeds(1);
+		for (Element element : seeds.keySet())
+			FarmStats.SEEDS(element).add(farm, seeds.get(element));
 
 		Hologram hologram = createHologram(event, incomePerClick, seeds);
 		Bukkit.getScheduler().runTaskLater(FarmKing.getInstance(), () -> {
@@ -59,6 +62,12 @@ public class Grass {
 		}, 10);
 
 		respawnLater(event.getBlock());
+	}
+
+	public void autoClick(double amount) {
+		UEcoBank.add(farm.getOwner(), incomePerClick * amount);
+		getRandomSeeds(amount);
+		FarmStats.CLICKS_AUTO.add(farm, amount);
 	}
 
 	private static Hologram createHologram(GrassBreakEvent event, double income, Map<Element, Double> seeds) {
@@ -73,13 +82,18 @@ public class Grass {
 		return hologram;
 	}
 
-	private Map<Element, Double> getRandomClickSeeds(Farm farm, int numClicks) {
-		if (!EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm))
+	public Map<Element, Double> getRandomSeeds(double numClicks) {
+		return getRandomSeeds(numClicks, 1, 0);
+	}
+
+	public Map<Element, Double> getRandomSeeds(double numClicks, double extraMultiplier, double extraFlat) {
+		if (!OneTimeEvent.ALIGNMENTS_UNLOCKED.isComplete(farm))
 			return new HashMap<>();
 
 		Map<Element, Double> seeds = new HashMap<>();
 
-		double totalChance = baseSeedChance * numClicks * baseSeedChanceMultiplier;
+		double totalChance = numClicks * (baseSeedChance * farm.getUpgradeBonus(SEED_MULTIPLIER) * extraMultiplier
+				+ farm.getUpgradeBonus(UpgradeBonus.SEED_FLAT) + extraFlat);
 
 		double baseSeeds = (int) totalChance;
 		double extraSeedChance = totalChance - baseSeeds;
@@ -88,8 +102,6 @@ public class Grass {
 			double seedsGained = baseSeeds;
 			if (extraSeedChance > Math.random())
 				seedsGained++;
-
-			FarmStats.SEEDS(e).add(farm, seedsGained);
 			seeds.put(e, seedsGained);
 		}
 
@@ -119,5 +131,10 @@ public class Grass {
 					b.setType(Material.LONG_GRASS);
 					b.setData((byte) 1);
 				}
+
+		for (int i = 0; i <= Math.min(4, directLevel); i++)
+			new GrassUpgradeFrame(farm, directLevel, true).generate();
+		for (int i = 0; i <= Math.min(4, percentLevel); i++)
+			new GrassUpgradeFrame(farm, percentLevel, false).generate();
 	}
 }
