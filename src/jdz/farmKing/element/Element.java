@@ -55,4 +55,8 @@ public class Element {
 	public Upgrade getUpgrade(int tier, int index) {
 		return upgrades.get(tier * ElementMetaData.upgradesPerTier + index);
 	}
+	
+	public boolean hasCrop(Material material) {
+		return crops.contains(material.toString());
+	}
 }
