@@ -15,10 +15,10 @@ public class Upgrade{
 	@Getter private final String name;
 	@Getter private final String description;
 	@Getter private final List<String> lore;
-	private final List<UpgradeType> types;
+	private final List<UpgradeBonus> types;
 	private final List<UpgradeExpression> expressions;
 
-	public Upgrade(String name, String description, List<UpgradeType> types, List<UpgradeExpression> expressions) {
+	public Upgrade(String name, String description, List<UpgradeBonus> types, List<UpgradeExpression> expressions) {
 		if (name == null)
 			name = "";
 		if (description == null)
@@ -44,14 +44,14 @@ public class Upgrade{
 	}
 	
 	public static Upgrade emptyUpgrade(){
-		return new Upgrade("","",new ArrayList<UpgradeType>(), new ArrayList<UpgradeExpression>());
+		return new Upgrade("","",new ArrayList<UpgradeBonus>(), new ArrayList<UpgradeExpression>());
 	}
 
 	public int getNumBonuses() {
 		return types.size();
 	}
 
-	public UpgradeType getType(int i) {
+	public UpgradeBonus getType(int i) {
 		return types.get(i);
 	}
 	

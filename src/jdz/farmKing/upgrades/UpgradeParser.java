@@ -25,13 +25,13 @@ public class UpgradeParser {
 	public static Upgrade parse(String name, String description, List<String> expressionStrings) {
 		int i = 0;
 
-		List<UpgradeType> types = new ArrayList<UpgradeType>();
+		List<UpgradeBonus> types = new ArrayList<UpgradeBonus>();
 		List<UpgradeExpression> expressions = new ArrayList<UpgradeExpression>();
 
 		for (i = 0; i < expressionStrings.size(); i++) {
 			try {
 				String[] args = expressionStrings.get(i).split(">");
-				types.add(UpgradeType.valueOf(args[0].trim()));
+				types.add(UpgradeBonus.valueOf(args[0].trim()));
 				expressions.add(parseExpression(args[1].trim()));
 			}
 			catch (Exception e) {
