@@ -12,7 +12,7 @@ import jdz.farmKing.utils.Items;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum EventFlag {
+public enum OneTimeEvent {
 	ALIGNMENTS_UNLOCKED((farm) -> {
 		return farm.level > 1 || FarmStats.GEMS.get(farm) > 2e9;
 	}, (farm, player) -> {
@@ -21,7 +21,7 @@ public enum EventFlag {
 						+ ChatColor.DARK_GREEN + "]============",
 				ChatColor.WHITE + "Now that you've reached 2B gems, you can align with one of the elements!",
 				ChatColor.WHITE + "Right-click the bottle to chose an element and see what it does!",
-				ChatColor.WHITE + "You can align with a different element every gem reset!",
+				ChatColor.WHITE + "You can pick a different element every gem reset!",
 				ChatColor.DARK_GREEN + "=============================================" };
 
 		player.sendMessage(messages);
