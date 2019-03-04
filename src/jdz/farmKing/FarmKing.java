@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import jdz.bukkitUtils.interactableObject.InteractableObjectFactory;
-import jdz.farmKing.achievements.AchievementInventories;
 import jdz.farmKing.command.FarmCommandExecutor;
 import jdz.farmKing.crops.CropBuySign;
 import jdz.farmKing.crops.CropType;
@@ -26,6 +25,7 @@ import jdz.farmKing.listeners.Invincibility;
 import jdz.farmKing.listeners.PlayerJoinQuit;
 import jdz.farmKing.listeners.WorldGuard;
 import jdz.farmKing.stats.FarmStats;
+import jdz.farmKing.utils.Items;
 import lombok.Getter;
 
 public class FarmKing extends JavaPlugin {
@@ -56,10 +56,8 @@ public class FarmKing extends JavaPlugin {
 
 		FarmBuffer.updateBuffer();
 
-		AchievementInventories.reload();
-
 		for (Player p : getServer().getOnlinePlayers()) {
-			PlayerJoinQuit.playerJoinSetup(p);
+			Items.give(p);
 			PlayerFarms.get(p);
 		}
 	}
@@ -73,11 +71,11 @@ public class FarmKing extends JavaPlugin {
 		new FarmIncomeGenerator().registerEvents(this);
 		new GrassBreakListener().registerEvents(this);
 	}
-	
+
 	public void registerInteractables() {
-		new InteractableObjectFactory<CropBuySign>().register(this);
-		new InteractableObjectFactory<CropUpgradeFrame>().register(this);
-		new InteractableObjectFactory<GrassUpgradeFrame>().register(this);
+		new InteractableObjectFactory<CropBuySign>(CropBuySign.class).register(this);
+		new InteractableObjectFactory<CropUpgradeFrame>(CropUpgradeFrame.class).register(this);
+		new InteractableObjectFactory<GrassUpgradeFrame>(GrassUpgradeFrame.class).register(this);
 	}
 
 }
