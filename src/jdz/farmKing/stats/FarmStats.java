@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 
 import jdz.UEconomy.events.BalanceChangeEvent;
 import jdz.farmKing.FarmKing;
+import jdz.farmKing.crops.CropType;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.stats.types.FarmStat;
 import jdz.farmKing.stats.types.FarmStatBuffered;
@@ -58,18 +59,25 @@ public abstract class FarmStats extends BufferedStatType {
 	public static final FarmStatBuffered LEVEL = new FarmStatDouble("Level");
 	public static final FarmStatBuffered GEMS = new FarmStatDouble("Gems");
 
-	public static FarmStatBuffered CROP_AMOUNT(int index) {
-		return CropAmounts.get(index);
+	public static FarmStatBuffered CROP_AMOUNT(CropType type) {
+		return CropAmounts.get(type.getId());
 	}
 
 	private static final List<FarmStatBuffered> CropAmounts = new ArrayList<FarmStatBuffered>();
 	static {
-		for (int i = 0; i < 16; i++)
-			CropAmounts.add(new FarmStatDouble("crop " + i, false));
+		for (CropType type: CropType.values())
+			CropAmounts.add(new FarmStatDouble(type.getName()+" amount", false));
 	}
 	
-	public static FarmStatBuffered CROP_LEVEL(int index) {
-		return CropAmounts.get(index);
+	public static final FarmStatLinked TOTAL_CROPS = new FarmStatLinked("Total Crops", false, (player)->{
+		double amount = 0;
+		for (FarmStatBuffered stat: CropAmounts)
+			amount += stat.get(player);
+		return amount;
+	});
+	
+	public static FarmStatBuffered CROP_LEVEL(CropType type) {
+		return CropAmounts.get(type.getId());
 	}
 
 	private static final List<FarmStatBuffered> CropLevels = new ArrayList<FarmStatBuffered>();

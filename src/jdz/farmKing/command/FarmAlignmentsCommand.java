@@ -6,11 +6,13 @@ import org.bukkit.entity.Player;
 import jdz.bukkitUtils.commands.SubCommand;
 import jdz.bukkitUtils.commands.annotations.CommandLabel;
 import jdz.bukkitUtils.commands.annotations.CommandMethod;
-import jdz.farmKing.element.ElementSelectInventory;
-import jdz.farmKing.element.ElementUpgradeInventory;
+import jdz.farmKing.element.data.PlayerElementData;
+import jdz.farmKing.element.data.PlayerElementDataManager;
+import jdz.farmKing.element.gui.ElementSelectInventory;
+import jdz.farmKing.element.gui.ElementUpgradeInventory;
 import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.data.PlayerFarms;
-import jdz.farmKing.stats.EventFlag;
+import jdz.farmKing.stats.OneTimeEvent;
 import net.md_5.bungee.api.ChatColor;
 
 @CommandLabel("alignment")
@@ -27,16 +29,15 @@ public class FarmAlignmentsCommand extends SubCommand {
 			return;
 		}
 
-		if (!EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm)) {
+		if (!OneTimeEvent.ALIGNMENTS_UNLOCKED.isComplete(farm)) {
 			player.sendMessage(ChatColor.RED + "You need 2B gems to do that!");
 			return;
 		}
 
-		if (farm.elementInventory == null)
+		PlayerElementData data = PlayerElementDataManager.getInstance().get(player);
+		if (data.getElement() == null)
 			ElementSelectInventory.getInstance().open(player);
-		else {
-			farm.elementInventory.update();
+		else
 			ElementUpgradeInventory.getInstance().open(player);
-		}
 	}
 }

@@ -91,7 +91,7 @@ public class FarmDBYML implements FarmDB {
 			if (!config.contains(s + "." + "owner"))
 				continue;
 
-			farms.add(new Farm(Integer.parseInt(s), config.getInt(s + "x"), config.getInt(s + "z"), false));
+			farms.add(new Farm(Integer.parseInt(s), config.getInt(s + "x"), config.getInt(s + "z")));
 		}
 
 		return farms;

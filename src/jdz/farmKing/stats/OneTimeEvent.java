@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum OneTimeEvent {
 	ALIGNMENTS_UNLOCKED((farm) -> {
-		return farm.level > 1 || FarmStats.GEMS.get(farm) > 2e9;
+		return farm.getLevel() > 1 || FarmStats.GEMS.get(farm) > 2e9;
 	}, (farm, player) -> {
 		String[] messages = new String[] {
 				ChatColor.DARK_GREEN + "============[ " + ChatColor.DARK_AQUA + "Elements Unlocked "
@@ -30,7 +30,7 @@ public enum OneTimeEvent {
 	}),
 
 	WORKERS_UNLOCKED((farm) -> {
-		return farm.level > 1 || FarmStats.WORKERS.get(farm) > 0;
+		return farm.getLevel() > 1 || FarmStats.WORKERS.get(farm) > 0;
 	}, (farm, player) -> {
 		String[] messages = new String[] {
 				ChatColor.DARK_GREEN + "============[ " + ChatColor.DARK_AQUA + "Workers Unlocked " + ChatColor.DARK_GREEN

@@ -22,7 +22,8 @@ import jdz.farmKing.farm.generation.FarmSchema.FarmSchemaFormatException;
 
 @SuppressWarnings("deprecation")
 public class FarmGenerator {
-	public static final int ISLAND_WIDTH = 150, ISLAND_LENGTH = 150, ISLAND_HEIGHT = 100, SPAWN_BORDER = ISLAND_WIDTH * 2;
+	public static final int ISLAND_WIDTH = 150, ISLAND_LENGTH = 150, ISLAND_HEIGHT = 100,
+			SPAWN_BORDER = ISLAND_WIDTH * 2;
 
 	public static List<FarmSchema> schematics = new ArrayList<FarmSchema>();
 
@@ -86,11 +87,18 @@ public class FarmGenerator {
 		int xx = x + dx * remainder * ISLAND_WIDTH;
 		int zz = z + dz * remainder * ISLAND_LENGTH;
 
-		FarmSchema schematic = getSchematicForLevel(0);
-		Vector origin = getOrigin(xx, zz, schematic);
-		pasteSchema(schematic, origin, Bukkit.getWorlds().get(0));
+		generateBlocks(index, xx, zz);
+		return new Farm(index, xx, zz);
+	}
 
-		return new Farm(index, xx, zz, true);
+	public static void generateBlocks(Farm farm) {
+		generateBlocks(farm.getLevel(), farm.getOrigin().getBlockX(), farm.getOrigin().getBlockZ());
+	}
+
+	public static void generateBlocks(int level, int x, int z) {
+		FarmSchema schematic = getSchematicForLevel(level);
+		Vector origin = getOrigin(x, z, schematic);
+		pasteSchema(schematic, origin, Bukkit.getWorlds().get(0));
 	}
 
 	public static FarmSchema getSchematicForLevel(int farmLevel) {

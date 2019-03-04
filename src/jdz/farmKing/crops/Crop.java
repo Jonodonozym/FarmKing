@@ -30,13 +30,13 @@ public class Crop {
 	private final CropVisualisationGenerator visualGen;
 
 	public Crop(Farm farm, CropType cropType) {
-		this(farm, cropType, false);
-	}
-
-	public Crop(Farm farm, CropType cropType, boolean isGenerated) {
 		this.farm = farm;
 		type = cropType;
-		generated = isGenerated;
+
+		if (cropType.getId() == 0)
+			generated = true;
+		else
+			generated = farm.getCrops()[cropType.getId() - 1].getQuantity() > 0;
 
 		hologram = new CropInfoHologram(this);
 		buySign = new CropBuySign(this, getDirection());
@@ -97,6 +97,7 @@ public class Crop {
 		hologram.delete();
 		buySign.delete();
 		infoSign.delete();
+		visualGen.clear();
 
 		for (int i = 0; i < getLevel() + 1; i++)
 			new CropUpgradeFrame(this, getDirection(), i, true).delete();
@@ -117,7 +118,7 @@ public class Crop {
 	}
 
 	public void levelUp() {
-		FarmStats.CROP_LEVEL(type.getId()).add(farm, 1);
+		FarmStats.CROP_LEVEL(type).add(farm, 1);
 		if (getLevel() < 10)
 			new CropUpgradeFrame(this, getDirection(), getLevel(), true).generate();
 	}
@@ -151,18 +152,18 @@ public class Crop {
 	}
 
 	public int getLevel() {
-		return (int) FarmStats.CROP_LEVEL(type.getId()).get(farm);
+		return (int) FarmStats.CROP_LEVEL(type).get(farm);
 	}
 
 	public int getQuantity() {
-		return (int) FarmStats.CROP_AMOUNT(type.getId()).get(farm);
+		return (int) FarmStats.CROP_AMOUNT(type).get(farm);
 	}
 
 	private void setLevel(int level) {
-		FarmStats.CROP_LEVEL(type.getId()).set(farm, level);
+		FarmStats.CROP_LEVEL(type).set(farm, level);
 	}
 
 	private void setQuantity(int amount) {
-		FarmStats.CROP_AMOUNT(type.getId()).set(farm, amount);
+		FarmStats.CROP_AMOUNT(type).set(farm, amount);
 	}
 }

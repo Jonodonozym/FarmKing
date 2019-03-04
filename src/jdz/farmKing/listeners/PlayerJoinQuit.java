@@ -1,30 +1,15 @@
 package jdz.farmKing.listeners;
 
-import java.util.ArrayList;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-
-import jdz.UEconomy.UEcoFormatter;
-import jdz.UEconomy.data.UEcoBank;
 import jdz.bukkitUtils.events.Listener;
-import jdz.farmKing.HologramManager;
-import jdz.farmKing.achievements.AchievementData;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.FarmScoreboards;
-import jdz.farmKing.farm.FarmIncomeGenerator;
+import jdz.farmKing.farm.data.FarmDB;
 import jdz.farmKing.farm.data.PlayerFarms;
-import jdz.farmKing.stats.EventFlag;
-import jdz.farmKing.stats.FarmStats;
-import jdz.farmKing.stats.types.FarmStatTime;
 import jdz.farmKing.utils.Items;
-import jdz.statsTracker.stats.StatType;
-import net.md_5.bungee.api.ChatColor;
 
 /**
  * Event handler class that listens for player join and quit events.
@@ -45,30 +30,16 @@ public class PlayerJoinQuit implements Listener {
 	 */
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
-		playerJoinSetup(e.getPlayer());
+		Items.give(e.getPlayer());
 	}
 
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		quitStuff(e.getPlayer());
-	}
-
-	@EventHandler
-	public void onPlayerKick(PlayerKickEvent e) {
-		quitStuff(e.getPlayer());
-	}
-
-	public static void playerJoinSetup(Player player) {
-		Farm f = PlayerFarms.get(player);
-
-		Items.give(player);
-		
-		AchievementData.addPlayer(player);
-	}
-
-	private static void quitStuff(Player player) {
-		PlayerFarms.get(player).lastLogin = System.currentTimeMillis();
-		FarmIO.save(PlayerFarms.get(player));
-		AchievementData.removePlayer(player);
+		Player player = e.getPlayer();
+		if (PlayerFarms.hasFarm(player)) {
+			Farm farm = PlayerFarms.get(player);
+			farm.lastLogin = System.currentTimeMillis();
+			FarmDB.getInstance().save(farm);
+		}
 	}
 }

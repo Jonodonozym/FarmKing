@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import jdz.farmKing.farm.Farm;
 import jdz.farmKing.farm.data.PlayerFarms;
-import jdz.farmKing.stats.EventFlag;
+import jdz.farmKing.stats.OneTimeEvent;
 import net.md_5.bungee.api.ChatColor;
 
 public class Items {
@@ -88,7 +88,7 @@ public class Items {
 			return;
 
 		Farm f = PlayerFarms.get(player);
-		if (EventFlag.ALIGNMENTS_UNLOCKED.isComplete(f))
+		if (OneTimeEvent.ALIGNMENTS_UNLOCKED.isComplete(f))
 			inv.addItem(Items.alignmentItem);
 		
 	}

@@ -78,4 +78,30 @@ public class CropVisualisationGenerator {
 			}
 	}
 
+	public void clear() {
+		if (crop.getDirection().getDx() == 0) {
+			int z = crop.getLocation().getBlockZ() - crop.getDirection().getDz() * distanceToDirt();
+			if (crop.getDirection().getDz() > 0)
+				z -= getMaxRow();
+			clearRegion(crop.getLocation().getBlockX() - 2, z, 5, getMaxRow());
+		}
+		else {
+			int x = crop.getLocation().getBlockX() - crop.getDirection().getDx() * distanceToDirt();
+			if (crop.getDirection().getDx() > 0)
+				x -= getMaxRow();
+			clearRegion(x, crop.getLocation().getBlockX() - 2, getMaxRow(), 5);
+		}
+	}
+
+	private void clearRegion(int x, int z, int width, int length) {
+		int y = crop.getLocation().getBlockY();
+		World world = crop.getLocation().getWorld();
+		for (int xx = x; xx <= x + width; x += 1)
+			for (int zz = z; zz <= z + length; z += 1) {
+				world.getBlockAt(x, y, z).setType(Material.AIR);
+				world.getBlockAt(x, y - 1, z).setType(Material.DIRT);
+				world.getBlockAt(x, y + 1, z).setType(Material.AIR);
+			}
+	}
+
 }

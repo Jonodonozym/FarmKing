@@ -13,7 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/gcStats.jar"/>
 	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/HolographicDisplays.jar"/>
-	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/JBU.jar"/>
+	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/JBU.jar" sourcepath="/JonosBukkitUtils"/>
 	<classpathentry kind="lib" path="D:/User/git/^^Libs/Minecraft Plugins/UEco.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>

@@ -38,9 +38,9 @@ public class FarmGemReset extends SubCommand {
 
 		hasPerformedCheck.add(player);
 
-		if (farm.gemResetAmount > 0)
+		if (farm.gemsFromResetting > 0)
 			player.sendMessage(ChatColor.YELLOW + "Are you sure you want to do that? You will gain "
-					+ UEcoFormatter.charFormat(farm.gemResetAmount, 4) + " gem" + (farm.gemResetAmount == 1 ? "" : "s")
+					+ UEcoFormatter.charFormat(farm.gemsFromResetting, 4) + " gem" + (farm.gemsFromResetting == 1 ? "" : "s")
 					+ " by resetting.");
 		else
 			player.sendMessage(ChatColor.YELLOW

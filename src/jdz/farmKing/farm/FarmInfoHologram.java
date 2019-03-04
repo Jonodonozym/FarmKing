@@ -3,8 +3,10 @@ package jdz.farmKing.farm;
 
 import static jdz.UEconomy.UEcoFormatter.charFormat;
 import static jdz.UEconomy.UEcoFormatter.makeWhole;
+import static org.bukkit.ChatColor.GREEN;
+import static org.bukkit.ChatColor.RED;
+import static org.bukkit.ChatColor.YELLOW;
 
-import static org.bukkit.ChatColor.*;
 import org.bukkit.Location;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -30,18 +32,18 @@ public class FarmInfoHologram {
 		hologram.appendTextLine(RED + "None");
 		hologram.appendTextLine("");
 		hologram.appendTextLine(
-				GREEN + "Gems required for level up: " + makeWhole(charFormat(farm.getGemReq(farm.getLevel() + 1), 4)));
+				GREEN + "Gems required for level up: " + makeWhole(charFormat(farm.getLevelupGemRequirement(farm.getLevel() + 1), 4)));
 	}
 
 	public void update() {
-		gemMultiplierLine.setText(
-				GREEN + "Multiplier from gems: " + YELLOW + "x" + charFormat(farm.getGemIncomeMultiplier(), 4));
+		gemMultiplierLine
+				.setText(GREEN + "Multiplier from gems: " + YELLOW + "x" + charFormat(farm.getGemMultiplier(), 4));
 		gemsFromResetLine.setText(GREEN + "Gems gained from resetting: " + YELLOW
 				+ makeWhole(charFormat(farm.getGemsFromResetting(), 4)));
 	}
 
 	public Location getLocation() {
-		return farm.spawn.clone().add(0, 3, 3);
+		return farm.getSpawn().clone().add(0, 3, 3);
 	}
 
 }

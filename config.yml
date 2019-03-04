@@ -33,6 +33,10 @@ crops:
     c14: 4.99E7
     c15: 1.555E8
     c16: 5E9
+  multiplier: 1.065
+  multiplierReduction: 0.01
+  costMultiplierLevelsPreprocess: 5
+  cropQuantityPricePreprocess: 16000
     
 alignments:
   tierCost:

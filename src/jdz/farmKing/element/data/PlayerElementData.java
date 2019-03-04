@@ -5,6 +5,9 @@ import org.bukkit.entity.Player;
 
 import jdz.farmKing.element.Element;
 import static jdz.farmKing.element.ElementMetaData.*;
+
+import java.util.Arrays;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
@@ -35,5 +38,11 @@ public class PlayerElementData {
 
 	public boolean hasBoughtUpgrade(int tier, int index) {
 		return upgradesBought[tier * upgradesPerTier + index];
+	}
+	
+	public void reset() {
+		element = null;
+		Arrays.fill(tiersBought, false);
+		Arrays.fill(upgradesBought, false);
 	}
 }

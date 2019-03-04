@@ -1,6 +1,10 @@
 
 package jdz.farmKing.farm;
 
+import static jdz.farmKing.upgrades.UpgradeBonus.AUTO_CLICKS;
+import static jdz.farmKing.upgrades.UpgradeBonus.OFFLINE_INCOME;
+import static jdz.farmKing.upgrades.UpgradeBonus.ONLINE_INCOME;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,8 +14,7 @@ import jdz.UEconomy.UEcoFormatter;
 import jdz.UEconomy.data.UEcoBank;
 import jdz.bukkitUtils.events.Listener;
 import jdz.farmKing.FarmKing;
-import jdz.farmKing.achievements.AchievementData;
-import jdz.farmKing.element.ElementUpgradeInventory;
+import jdz.farmKing.element.gui.ElementUpgradeInventory;
 import jdz.farmKing.farm.data.PlayerFarms;
 import jdz.farmKing.stats.FarmStats;
 import jdz.farmKing.stats.types.FarmStatTime;
@@ -20,22 +23,13 @@ import net.md_5.bungee.api.ChatColor;
 public class FarmIncomeGenerator implements Listener {
 	static {
 		Bukkit.getScheduler().runTaskTimer(FarmKing.getInstance(), () -> {
-			for (Player p : Bukkit.getOnlinePlayers())
-				if (PlayerFarms.hasFarm(p))
-					onSecond(p, PlayerFarms.get(p));
+			ElementUpgradeInventory.getInstance().updateOpen();
+			for (Player player : Bukkit.getOnlinePlayers())
+				if (PlayerFarms.hasFarm(player)) {
+					PlayerFarms.get(player).onSecond();
+					FarmScoreboards.updateScoreboard(player);
+				}
 		}, 20, 20);
-	}
-
-	private static void onSecond(Player player, Farm farm) {
-		farm.update();
-
-		UEcoBank.add(player, farm.currentIncome);
-		
-		farm.doManualClick(farm.autoClicksPerSecond);
-		
-		FarmScoreboards.updateScoreboard(player);
-		ElementUpgradeInventory.updateOpenInventories();
-		AchievementData.updateAchievements(farm);
 	}
 
 	@EventHandler
@@ -47,19 +41,28 @@ public class FarmIncomeGenerator implements Listener {
 
 		Farm farm = PlayerFarms.get(player);
 
-		int timeDifference = (int) ((System.currentTimeMillis() - farm.lastLogin) / 1000.0);
-		farm.lastLogin = System.currentTimeMillis();
-		FarmStats.OFFLINE_TIME.add(farm, timeDifference);
+		farm.updateIncome();
+		double oldIncome = farm.getIncome();
 
-		if (timeDifference <= 60)
+		long secondsPassed = (System.currentTimeMillis() - farm.lastLogin) / 1000L;
+		farm.lastLogin = System.currentTimeMillis();
+		FarmStats.OFFLINE_TIME.add(farm, secondsPassed);
+
+		if (secondsPassed <= 60)
 			return;
 
-		double avgIncome = (farm.currentIncome + farm.update()) / 2;
-		double offlineEarnings = timeDifference * avgIncome * FarmStats.OFFLINE_BONUS.get(farm);
+		farm.updateIncome();
+		double newIncome = farm.getIncome();
+
+		double avgIncome = (newIncome + oldIncome) / 2 / farm.getUpgradeBonus(ONLINE_INCOME);
+		double offlineEarnings = secondsPassed * avgIncome * farm.getUpgradeBonus(OFFLINE_INCOME);
+
+		farm.getGrass().autoClick(farm.getUpgradeBonus(AUTO_CLICKS) * secondsPassed);
+		farm.addWorkerSeedsForSeconds(secondsPassed);
 
 		UEcoBank.add(player, offlineEarnings);
-		player.sendMessage(
-				ChatColor.GREEN + "While you were offline for " + FarmStatTime.timeFromSeconds(timeDifference)
-						+ ", you earnt $" + UEcoFormatter.charFormat(offlineEarnings));
+		player.sendMessage(ChatColor.GREEN + "While you were offline for " + FarmStatTime.timeFromSeconds(secondsPassed)
+				+ ", you earnt $" + UEcoFormatter.charFormat(offlineEarnings));
+
 	}
 }

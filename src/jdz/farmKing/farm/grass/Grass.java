@@ -1,6 +1,7 @@
 
 package jdz.farmKing.farm.grass;
 
+import static jdz.farmKing.upgrades.UpgradeBonus.SEED_MULTIPLIER;
 import static org.bukkit.ChatColor.BOLD;
 import static org.bukkit.ChatColor.YELLOW;
 
@@ -21,12 +22,10 @@ import jdz.UEconomy.data.UEcoBank;
 import jdz.farmKing.FarmKing;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.farm.Farm;
-import jdz.farmKing.farm.generation.FarmGenerator;
 import jdz.farmKing.farm.generation.FarmSchema;
+import jdz.farmKing.stats.FarmStats;
 import jdz.farmKing.stats.OneTimeEvent;
 import jdz.farmKing.upgrades.UpgradeBonus;
-import jdz.farmKing.stats.FarmStats;
-import static jdz.farmKing.upgrades.UpgradeBonus.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -118,7 +117,7 @@ public class Grass {
 
 	@SuppressWarnings("deprecation")
 	public void respawn() {
-		FarmSchema schema = FarmGenerator.getSchematicForLevel(farm.level);
+		FarmSchema schema = farm.getSchematic();
 		World world = farm.getSpawn().getWorld();
 
 		int xMax = farm.getOrigin().getBlockX() + schema.getSize().getBlockX();
@@ -136,5 +135,14 @@ public class Grass {
 			new GrassUpgradeFrame(farm, directLevel, true).generate();
 		for (int i = 0; i <= Math.min(4, percentLevel); i++)
 			new GrassUpgradeFrame(farm, percentLevel, false).generate();
+	}
+
+	public void reset() {
+		for (int i = 0; i <= Math.min(4, directLevel); i++)
+			new GrassUpgradeFrame(farm, directLevel, true).delete();
+		for (int i = 0; i <= Math.min(4, percentLevel); i++)
+			new GrassUpgradeFrame(farm, percentLevel, false).delete();
+		directLevel = 0;
+		percentLevel = 0;
 	}
 }

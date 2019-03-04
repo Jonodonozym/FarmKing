@@ -17,7 +17,7 @@ import jdz.UEconomy.data.UEcoBank;
 import jdz.bukkitUtils.events.Listener;
 import jdz.farmKing.element.Element;
 import jdz.farmKing.farm.data.PlayerFarms;
-import jdz.farmKing.stats.EventFlag;
+import jdz.farmKing.stats.OneTimeEvent;
 import jdz.farmKing.stats.FarmStats;
 import static net.md_5.bungee.api.ChatColor.*;
 
@@ -53,7 +53,7 @@ public class FarmScoreboards implements Listener {
 	private static void updateIncome(PlayerScoreboardData data) {
 		Farm farm = PlayerFarms.get(data.getOwner());
 		data.getScoreboard().resetScores(data.getIncome());
-		data.setIncome(GREEN + "$" + charFormat(farm == null ? 0 : farm.currentIncome, 4) + "/s");
+		data.setIncome(GREEN + "$" + charFormat(farm == null ? 0 : farm.getIncome(), 4) + "/s");
 		data.getObjective().getScore(data.getIncome()).setScore(3);
 	}
 
@@ -69,7 +69,7 @@ public class FarmScoreboards implements Listener {
 	private static void updateSeeds(PlayerScoreboardData data) {
 		Farm farm = PlayerFarms.get(data.getOwner());
 
-		if (farm == null || !EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm))
+		if (farm == null || !OneTimeEvent.ALIGNMENTS_UNLOCKED.isComplete(farm))
 			return;
 
 		for (int i = 0; i < data.seedLines(); i++)
@@ -87,7 +87,7 @@ public class FarmScoreboards implements Listener {
 	private static void updateWorkers(PlayerScoreboardData data) {
 		Farm farm = PlayerFarms.get(data.getOwner());
 
-		if (farm == null || !EventFlag.WORKERS_UNLOCKED.isComplete(farm))
+		if (farm == null || !OneTimeEvent.WORKERS_UNLOCKED.isComplete(farm))
 			return;
 
 		data.getScoreboard().resetScores(data.getWorkers());
@@ -119,9 +119,9 @@ public class FarmScoreboards implements Listener {
 		if (farm == null)
 			return;
 
-		if (EventFlag.ALIGNMENTS_UNLOCKED.isComplete(farm))
+		if (OneTimeEvent.ALIGNMENTS_UNLOCKED.isComplete(farm))
 			addSeedSection(player);
-		if (EventFlag.WORKERS_UNLOCKED.isComplete(farm))
+		if (OneTimeEvent.WORKERS_UNLOCKED.isComplete(farm))
 			addWorkerSection(player);
 
 		updateGems(player);

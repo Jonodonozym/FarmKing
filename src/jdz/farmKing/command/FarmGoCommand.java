@@ -16,8 +16,8 @@ public class FarmGoCommand extends SubCommand {
 	@CommandMethod
 	public void warpToOwnFarm(Player player) {
 		Farm farm = PlayerFarms.get(player);
-		player.teleport(farm.spawn);
-		player.getWorld().playSound(farm.spawn, Sound.ENTITY_BAT_TAKEOFF, 1, 1);
+		player.teleport(farm.getSpawn());
+		player.getWorld().playSound(farm.getSpawn(), Sound.ENTITY_BAT_TAKEOFF, 1, 1);
 	}
 
 }

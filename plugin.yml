@@ -1,8 +1,8 @@
-main: farmKing.main.Main
+main: jdz.farmKing.main.Main
 name: FarmKing
 version: 1.0
 author: Jonodonozym
-depend: [HolographicDisplays, UPEconomy, WorldEdit]
+depend: [HolographicDisplays, UEconomy, Vault, WorldEdit]
 description: A farmking pluign
 
 commands:
